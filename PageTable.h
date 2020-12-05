@@ -12,18 +12,20 @@
 
 #include "PageTableEntry.h"
 #include "AddressStructs.h"
+#include "BinaryConverter.h"
 #include <vector>
 #include <map>
 #include <cmath>
+#include <iostream>
 
 class PageTable {
 private:
 //int pageSize = 0;
 
 public:
-int pageSize = 0;
+int pageSize = 0;                    // number of bytes in frames and pages
 std::vector<PageTableEntry> entries; //[TODO]: map <VPN,PTE>
-
+int accessOrdinal = 1;               // largest == most recently used. 
 
 /// <summary>
 /// Parameterized constructor
@@ -33,11 +35,13 @@ std::vector<PageTableEntry> entries; //[TODO]: map <VPN,PTE>
 /// <param name="frameSize">size of offset (in bytes)</param>
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize);
 
-
-/// Given virtual address, return mapping of physical address
+/// <summary>
+/// Given VPN, return mapped PFN.
+/// </summary>
+/// <param name="VPN">Virtual Page Number bit array</param>
 std::vector<int> PageTable::TranslateVPN(std::vector<int> VPN);
-
 };
+
 
 
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize) {
@@ -57,18 +61,20 @@ PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize) {
 
 std::vector<int> PageTable::TranslateVPN(std::vector<int> targetVPN)
 {
+    // Convert to binary integer
+    int VPNindex = BinaryConverter::ToBinaryInt(targetVPN);
 
-    // Search table for PTE with addr's VPN
-    for(int i = 0; i < PageTable::entries.size(); i++) 
-    {
-        if(entries[i].VPN == VPN)// if same bits
-        {
-            // We found our entry!
-            // But, is it mapped?
-            if(!entries[i].IsPresent())      // if not...
-                HandlePageFault(&entries[i]);// update entry  
-            //[TODO]: Update victim PTE
-            return entries[i].PFN;           // return entry's PFN
-        }
+    // Get entry via indexed VPN
+    PageTableEntry* PTEptr = &entries[VPNindex];
+
+    // Is it invalid?
+    if(PTEptr->validBit == false) { // if so, page fault
+        std::cout << "Page fault for entry VPN == " << VPNindex << std::endl;
     }
+    
+    // Update reference ordinal
+    PTEptr->lastUsed = accessOrdinal;
+    accessOrdinal++;
+
+    return PTEptr->PFN; //[TODO]: check if this leaks memory
 }
