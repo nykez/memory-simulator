@@ -26,9 +26,9 @@ public:
     int lastUsed = 0;       // Larger means more recently used. 0 means never used.
 
     // Constructor
-    PageTableEntry(int PFNSize)
+    PageTableEntry(int numberOfPFNBits)
     {
-        PFN.reserve(PFNSize);
+        PFN.reserve(numberOfPFNBits);
     }
 };
 
