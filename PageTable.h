@@ -34,16 +34,14 @@ int accessOrdinal = 1;               // largest == most recently used.
 /// <param name="totalVirtualPages">number of PTEs</param>
 /// <param name="PFNsize">number of valid frames</param>
 /// <param name="frameSize">size of offset (in bytes)</param>
-PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize);
+PageTable(int totalVirtualPages, int totalFrames, int frameSize);
 
 /// <summary>
 /// Given VPN, return mapped PFN.
 /// </summary>
 /// <param name="VPN">Virtual Page Number bit array</param>
-std::vector<int> PageTable::TranslateVPN(std::vector<int> VPN);
+std::vector<int> TranslateVPN(std::vector<int>* VPN);
 };
-
-
 
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize) {
     // Store size of each frame
@@ -60,16 +58,15 @@ PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize) {
     }
 }
 
-std::vector<int> PageTable::TranslateVPN(std::vector<int> targetVPN)
+std::vector<int> PageTable::TranslateVPN(std::vector<int>* targetVPN)
 {
     // Convert to binary integer
-    int VPNindex = BinaryConverter::ToBinaryInt(targetVPN);
+    int VPNindex = BinaryConverter::ToBinaryInt(*targetVPN);
 
     // Get entry via indexed VPN
-    PageTableEntry* PTEptr = &entries[VPNindex];
 
     // Is it invalid?
-    if(PTEptr->validBit == false) { // if so, page fault
+    if(entries.at(VPNindex).validBit == false) { // if so, page fault
         std::cout << "Page fault for entry VPN == " << VPNindex << std::endl;
     }
     
