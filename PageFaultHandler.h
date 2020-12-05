@@ -32,8 +32,16 @@ namespace PageFaultHandler {
         PT->entries.at(VPNindex).PFN = retPFN;
     }
 
+    /// <summary>
+    /// Returns PFN of free frame (If any).
+    /// </summary>
+    /// <param name="PT">pointer to page table</param>
+    /// <returns>PFN of free frame. -1 if no free frames.</returns>
     int FindFreeFrame(PageTable* PT) {
-
+       if(PT->GetFrameCount() < PT->GetMaxFrameCount()) {
+           return PT->GetFrameCount();
+       }
+       return -1;
     }
 
     int LRUReplacePage(PageTable* PT) {
