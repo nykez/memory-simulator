@@ -20,7 +20,7 @@ namespace BinaryConverter
     /// </summary>
     /// <param name="bitArr">Array of bits</param>
     /// <returns>integer representing the value of the bit array</returns>
-    int BinaryConverter::ToBinaryInt(std::vector<int> bitArr)
+    int ToBinaryInt(std::vector<int> bitArr)
     {
         int bin = 0; 
         int col = bitArr.size() - 1;
