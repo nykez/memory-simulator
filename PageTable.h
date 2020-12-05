@@ -50,7 +50,7 @@ std::vector<int> TranslateVPN(std::vector<int> VPN);
 
 int GetMaxFrameCount();
 int GetFrameCount();
-
+int GetAccessOrdinal();
 };
 
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int maxFrames) {
@@ -93,4 +93,8 @@ int PageTable::GetMaxFrameCount() {
 
 int PageTable::GetFrameCount() {
     return frameCount;
+}
+
+int PageTable::GetAccessOrdinal() {
+    return accessOrdinal;
 }
