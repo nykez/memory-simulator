@@ -40,7 +40,7 @@ PageTable(int totalVirtualPages, int totalFrames, int frameSize);
 /// Given VPN, return mapped PFN.
 /// </summary>
 /// <param name="VPN">Virtual Page Number bit array</param>
-std::vector<int> TranslateVPN(std::vector<int>* VPN);
+std::vector<int> TranslateVPN(std::vector<int> VPN);
 };
 
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize) {
@@ -58,15 +58,16 @@ PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize) {
     }
 }
 
-std::vector<int> PageTable::TranslateVPN(std::vector<int>* targetVPN)
+std::vector<int> PageTable::TranslateVPN(std::vector<int> targetVPN)
 {
     // Convert to binary integer
-    int VPNindex = BinaryConverter::ToBinaryInt(*targetVPN);
+    int VPNindex = BinaryConverter::ToBinaryInt(targetVPN);
 
     // Get entry via indexed VPN
+    PageTableEntry* PTEptr = &entries[VPNindex-1];
 
     // Is it invalid?
-    if(entries.at(VPNindex).validBit == false) { // if so, page fault
+    if(PTEptr->validBit == false) { // if so, page fault
         std::cout << "Page fault for entry VPN == " << VPNindex << std::endl;
     }
     
