@@ -51,6 +51,9 @@ std::vector<int> TranslateVPN(std::vector<int> VPN);
 int GetMaxFrameCount();
 int GetFrameCount();
 int GetAccessOrdinal();
+void SetEntryValidity(int VPN, bool state);
+void SetEntryDirty(int VPN, bool state);
+void SetEntryPFN(int VPN, std::vector<int> PFN);
 };
 
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int maxFrames) {
@@ -97,4 +100,16 @@ int PageTable::GetFrameCount() {
 
 int PageTable::GetAccessOrdinal() {
     return accessOrdinal;
+}
+
+void PageTable::SetEntryValidity(int VPN, bool state) {
+    entries.at(VPN).validBit = state;
+}
+
+void PageTable::SetEntryDirty(int VPN, bool state) {
+    entries.at(VPN).dirtyBit = state;
+}
+
+void PageTable::SetEntryPFN(int VPN, std::vector<int> PFN) {
+    entries.at(VPN).PFN = PFN;
 }
