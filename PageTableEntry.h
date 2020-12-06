@@ -9,8 +9,10 @@
 //	Copyright:	    Harrison Pollitte 2020
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef PAGETABLEENTRY_H
+#define PAGETABLEENTRY_H
 #include <vector>
+
 
 ///<summary>
 /// entry in a page table. 
@@ -20,15 +22,20 @@ struct PageTableEntry
 {
 public:
     // Fields
-    std::vector<int> PFN;   // Frame number of this entry.
+    //std::vector<int> PFN; 
+    int PFN = 0;            // Frame number of this entry.
     bool dirtyBit = false;  // Have the contents of the frame pointed to by this been altered?
     bool validBit = false;  // Is the translation of this entry valid?
     int lastUsed = 0;       // Larger means more recently used. 0 means never used.
 
-    // Constructor
+    PageTableEntry(){}
+
+    /** Constructor
     PageTableEntry(int numberOfPFNBits)
     {
         PFN.reserve(numberOfPFNBits);
     }
+    /**/
 };
 
+#endif
