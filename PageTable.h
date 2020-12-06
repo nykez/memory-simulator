@@ -39,9 +39,9 @@ PageTable();
 /// Parameterized constructor
 /// </summary>
 /// <param name="totalVirtualPages">number of PTEs</param>
-/// <param name="PFNsize">number of valid frames</param>
-/// <param name="maxFrames">size of offset (in bytes)</param>
-PageTable(int totalVirtualPages, int totalFrames, int maxFrames);
+/// <param name="totalFrames">number of valid frames</param>
+/// <param name="pageSize">size of offset (in bytes)</param>
+PageTable(int totalVirtualPages, int totalFrames, int pageSize);
 
 /// <summary>
 /// Given VPN, return mapped PFN.
@@ -65,8 +65,8 @@ PageTable::PageTable() {
 
 }
 
-PageTable::PageTable(int totalVirtualPages, int totalFrames, int maxFrames) {
-    maxFrameCount = maxFrames;
+PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
+    maxFrameCount = totalFrames;
 
     // Determine number of bits
     //int VPNBits    = (int)log2((double)totalVirtualPages);
