@@ -1,4 +1,5 @@
-
+#ifndef MEM_CON_H
+#define MEM_CON_H
 #include "DataCache/Cache.h"
 #include "PageTable.h"
 #include "BinaryConverter.h"
@@ -42,3 +43,4 @@ int MemoryController::TransformVPNToPFN(int VPN) {
 int MemoryController::HandleFault(int VPN) {
     PageFaultHandler::HandleFault(&PT, &DC, VPN);
 }
+#endif
