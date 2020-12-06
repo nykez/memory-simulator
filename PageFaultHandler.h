@@ -16,17 +16,15 @@
 #include <vector>
 #include <iostream>
 #include "PageTable.h"
-
+#include "DataCache/Cache.h"
 namespace PageFaultHandler {
-    int HandleFault(PageTable::PageTable* PT, int VPNindex) {
-        int PFN = FindFreeFrame(PT);    // Find free frame to use.
-        if(PFN == -1) {                 // Is there a free frame?
-            PFN = LRUReplacePage(PT);   // If not, swap out a frame.
-        }
-        // Update entry's PFN
-        std::vector<int> retPFN = BinaryConverter::ToBitArray(PFN);
-        PT->entries.at(VPNindex).PFN = retPFN;
-        return PFN;
+
+    int HandleFault(PageTable::PageTable* PT, Cache::Cache* DC, int VPNindex) {
+        int PFN = FindFreeFrame(PT);        // Find free frame to use.
+        if(PFN == -1)                       // Is there a free frame?
+            PFN = LRUReplacePage(PT, DC);   // If not, swap out a frame.
+        PT->entries.at(VPNindex).PFN = PFN; // Update entry's PFN
+        return PFN;                         // Return PFN
     }
 
     /// <summary>
@@ -35,9 +33,8 @@ namespace PageFaultHandler {
     /// <param name="PT">pointer to page table</param>
     /// <returns>PFN of free frame. -1 if no free frames.</returns>
     int FindFreeFrame(PageTable* PT) {
-       if(PT->GetFrameCount() < PT->GetMaxFrameCount()) {
+       if(PT->GetFrameCount() < PT->GetMaxFrameCount())
            return PT->GetFrameCount();
-       }
        return -1;
     }
 
@@ -46,9 +43,9 @@ namespace PageFaultHandler {
     /// </summary>
     /// <param name="PT">pointer to page table</param>
     /// <returns>PFN of victim entry.</returns>
-    int LRUReplacePage(PageTable* PT) {
+    int LRUReplacePage(PageTable* PT, Cache::Cache* DC) {
         int LRU = PT->GetAccessOrdinal();
-        std::vector<int> victimPFN;
+        int victimPFN;
         int victimVPN = 0;
         // Find Least-Recently-Used entry in PT.
         for(int i = 0; i < PT->entries.size(); i++) {
@@ -64,17 +61,13 @@ namespace PageFaultHandler {
         // Update victim entry
         PT->SetEntryValidity(victimVPN, false);
         // Inform TLB and DC of newly invalidated entry
-        InformTLB(victimVPN);
-        InformDC(victimVPN);
+        //InformTLB(victimVPN);
+        DC->UpdateDirtyEntry(0,0);
+
+        return victimPFN;
     }
 
-    void InformTLB(int VPN) {
-        //[TODO]:
-    }
 
-    void InformDC(int VPN) {
-        //[TODO]:
-    }
 } // namespace PageFaultHandler
 
 #endif
