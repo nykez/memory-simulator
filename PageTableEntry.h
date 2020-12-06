@@ -9,8 +9,10 @@
 //	Copyright:	    Harrison Pollitte 2020
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef PAGETABLEENTRY_H
+#define PAGETABLEENTRY_H
 #include <vector>
+
 
 ///<summary>
 /// entry in a page table. 
@@ -32,3 +34,4 @@ public:
     }
 };
 
+#endif

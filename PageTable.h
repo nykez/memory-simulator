@@ -9,8 +9,8 @@
 //	Copyright:	    Harrison Pollitte 2020
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma once
-
+#ifndef PAGETABLE_H
+#define PAGETABLE_H
 #include "PageFaultHandler.h"
 #include "PageTableEntry.h"
 #include "BinaryConverter.h"
@@ -133,3 +133,5 @@ void PageTable::SetEntryPFN(int VPN, std::vector<int> PFN) {
 std::vector<int> PageTable::GetEntryPFN(int VPN) {
     return entries.at(VPN).PFN;
 }
+
+#endif
