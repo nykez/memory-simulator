@@ -11,41 +11,56 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include "PageFaultHandler.h"
 #include "PageTableEntry.h"
-#include "AddressStructs.h"
 #include "BinaryConverter.h"
+
 #include <vector>
-#include <map>
 #include <cmath>
 #include <iostream>
 
 class PageTable {
 private:
 //int pageSize = 0;
+int frameCount = 0;                  // number of frames in use.
+int maxFrameCount = 0;               // max frames allowed.
 
 public:
-int pageSize = 0;                    // number of bytes in frames and pages
 std::vector<PageTableEntry> entries; //[TODO]: map <VPN,PTE>
 int accessOrdinal = 1;               // largest == most recently used. 
+               
+
+
+
+
 
 /// <summary>
 /// Parameterized constructor
 /// </summary>
 /// <param name="totalVirtualPages">number of PTEs</param>
 /// <param name="PFNsize">number of valid frames</param>
-/// <param name="frameSize">size of offset (in bytes)</param>
-PageTable(int totalVirtualPages, int totalFrames, int frameSize);
+/// <param name="maxFrames">size of offset (in bytes)</param>
+PageTable(int totalVirtualPages, int totalFrames, int maxFrames);
 
 /// <summary>
 /// Given VPN, return mapped PFN.
 /// </summary>
 /// <param name="VPN">Virtual Page Number bit array</param>
 std::vector<int> TranslateVPN(std::vector<int> VPN);
+
+int GetMaxFrameCount();
+int GetFrameCount();
+int GetAccessOrdinal();
+void SetEntryValidity(int VPN, bool state);
+bool GetEntryValidity(int VPN);
+void SetEntryDirty(int VPN, bool state);
+bool GetEntryDirty(int VPN);
+void SetEntryPFN(int VPN, std::vector<int> PFN);
+std::vector<int> GetEntryPFN(int VPN);
 };
 
-PageTable::PageTable(int totalVirtualPages, int totalFrames, int frameSize) {
-    // Store size of each frame
-    pageSize = frameSize;
+PageTable::PageTable(int totalVirtualPages, int totalFrames, int maxFrames) {
+    maxFrameCount = maxFrames;
 
     // Determine number of bits
     //int VPNBits    = (int)log2((double)totalVirtualPages);
@@ -76,4 +91,40 @@ std::vector<int> PageTable::TranslateVPN(std::vector<int> targetVPN)
     accessOrdinal++;
 
     return PTEptr->PFN; //[TODO]: check if this leaks memory
+}
+
+int PageTable::GetMaxFrameCount() {
+    return maxFrameCount;
+}
+
+int PageTable::GetFrameCount() {
+    return frameCount;
+}
+
+int PageTable::GetAccessOrdinal() {
+    return accessOrdinal;
+}
+
+void PageTable::SetEntryValidity(int VPN, bool state) {
+    entries.at(VPN).validBit = state;
+}
+
+bool PageTable::GetEntryValidity(int VPN) {
+    return entries.at(VPN).validBit;
+}
+
+void PageTable::SetEntryDirty(int VPN, bool state) {
+    entries.at(VPN).dirtyBit = state;
+}
+
+bool PageTable::GetEntryDirty(int VPN) {
+    return entries.at(VPN).dirtyBit;
+}
+
+void PageTable::SetEntryPFN(int VPN, std::vector<int> PFN) {
+    entries.at(VPN).PFN = PFN;
+}
+
+std::vector<int> PageTable::GetEntryPFN(int VPN) {
+    return entries.at(VPN).PFN;
 }

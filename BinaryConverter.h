@@ -13,6 +13,7 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <list>
 namespace BinaryConverter
 {
     /// <summary>
@@ -31,4 +32,22 @@ namespace BinaryConverter
         }
         return bin;
     }
+
+    std::vector<int> ToBitArray(int binaryInt) 
+    {
+        if(binaryInt == 0) return {0}; 
+        
+        std::vector<int> bitArray;
+        std::vector<int>::iterator it;
+
+        while(binaryInt > 0)
+        {
+            it = bitArray.begin();
+            bitArray.insert(it, binaryInt % 2);
+            binaryInt /= 2;
+        }
+        bitArray.shrink_to_fit();
+        return bitArray;        
+    }
+
 } // namespace BinaryConverter
