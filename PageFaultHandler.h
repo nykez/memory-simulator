@@ -15,7 +15,7 @@
 
 #include <vector>
 #include <iostream>
-#include "PageTable.h"
+#include "PageTable/PageTable.h"
 #include "DataCache/Cache.h"
 namespace PageFaultHandler {
 

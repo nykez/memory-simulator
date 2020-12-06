@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef PAGETABLE_H
 #define PAGETABLE_H
-#include "PageTableEntry.h"
+#include "PageTable/PageTableEntry.h"
 #include "BinaryConverter.h"
 
 #include <vector>
