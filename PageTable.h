@@ -24,6 +24,10 @@ private:
 int frameCount = 0;                  // number of frames in use.
 int maxFrameCount = 0;               // max frames allowed.
 int accessOrdinal = 1;               // largest == most recently used. 
+int pageTableReferences = 0;         // amount of times we've referenced this table
+int hits = 0;                        // number of page table hits
+int misses = 0;                      // number of page table misses
+
 
 public:
 std::vector<PageTableEntry> entries; //[TODO]: map <VPN,PTE>
@@ -78,9 +82,11 @@ PageTable::PageTable(int totalVirtualPages, int totalFrames, int maxFrames) {
 
 std::pair<bool, int> PageTable::TranslateVPN(std::vector<int> targetVPN)
 {
+    pageTableReferences++;
+
     // Result return value
     std::pair<bool, int> res (true, 0);
-
+    
     // Convert to binary integer
     int VPNindex = BinaryConverter::ToBinaryInt(targetVPN);
 
@@ -91,8 +97,10 @@ std::pair<bool, int> PageTable::TranslateVPN(std::vector<int> targetVPN)
     if(PTEptr->validBit == false) { // if so, page fault
         std::cout << "Page fault for entry VPN == " << VPNindex << std::endl;
         res.first = false;
+        misses++;
     } else {
         res.second = PTEptr->PFN;
+        hits++;
     }
     
     // Update reference ordinal
