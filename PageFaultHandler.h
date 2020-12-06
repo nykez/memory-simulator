@@ -10,17 +10,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma once
-
-#include "PageTable.h"
-#include "PageTableEntry.h"
-#include "BinaryConverter.h"
+#ifndef PAGEFAULTHANDLER_H
+#define PAGEFAULTHANDLER_H
 
 #include <vector>
 #include <iostream>
+#include "PageTable.h"
 
 namespace PageFaultHandler {
-    void HandleFault(PageTable* PT, int VPNindex) {
+    int HandleFault(PageTable::PageTable* PT, int VPNindex) {
         int PFN = FindFreeFrame(PT);    // Find free frame to use.
         if(PFN == -1) {                 // Is there a free frame?
             PFN = LRUReplacePage(PT);   // If not, swap out a frame.
@@ -28,6 +26,7 @@ namespace PageFaultHandler {
         // Update entry's PFN
         std::vector<int> retPFN = BinaryConverter::ToBitArray(PFN);
         PT->entries.at(VPNindex).PFN = retPFN;
+        return PFN;
     }
 
     /// <summary>
@@ -78,3 +77,4 @@ namespace PageFaultHandler {
     }
 } // namespace PageFaultHandler
 
+#endif
