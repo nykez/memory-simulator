@@ -10,21 +10,47 @@
 #ifndef SIM_DEP_H
 #define SIM_DEP_H
 
-class SimulationDeployer
-{
+#include "MemoryController.h"
+#include <vector>
+
+class SimulationDeployer {
 private:
-    /* data */
+    //InputReader inputReader;
+    //OutputDisplayer outputDisplayer;
+    MemoryController* MCptr;        //ptr to MemoryController of this program simulation
+    
 public:
-    SimulationDeployer(/* args */);
+    SimulationDeployer();
     ~SimulationDeployer();
+    void GatherInput();
+    void RunProgram();
 };
 
-SimulationDeployer::SimulationDeployer(/* args */)
-{
+SimulationDeployer::SimulationDeployer() {
+
 }
 
-SimulationDeployer::~SimulationDeployer()
-{
+SimulationDeployer::~SimulationDeployer() {
+
+}
+
+///<summary>
+/// Directs inputReader to gather information from console.
+///</summary>
+void SimulationDeployer::GatherInput() {
+    
+}
+
+void SimulationDeployer::RunProgram() {
+    int _dbg_inputreader_inputlines_count = 8;
+    std::vector<string> outputLines;
+    //For each address in inputReader.inputLines
+    // pass into MC, storing results in array
+    for(int i = 0; i < _dbg_inputreader_inputlines_count; i++) {
+        outputLines[i] = MCptr->RunMemory();
+    }
+
+
 }
 
 

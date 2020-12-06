@@ -16,6 +16,7 @@ public:
     int TransformVPNToPFN(int VPN);
     int HandleFault(int VPN);
     void CreateElements();
+    std::string RunMemory(std::string trace);
 };
 
 MemoryController::MemoryController(int set, int index, int pages, int frames, int pageSize) {
@@ -25,6 +26,8 @@ MemoryController::MemoryController(int set, int index, int pages, int frames, in
 
 MemoryController::~MemoryController() {
 }
+
+
 
 int MemoryController::TransformVPNToPFN(int VPN) {
     std::vector<int> VPNarr = BinaryConverter::ToBitArray(VPN);
