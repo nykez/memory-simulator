@@ -4,7 +4,8 @@
 #include "PageTable.h"
 #include "BinaryConverter.h"
 #include "PageFaultHandler.h"
-
+#include "Trace.h"
+#include "TraceStats.h"
 class MemoryController {
 private:
     //DTLB TLB;         // our TLB
@@ -16,7 +17,7 @@ public:
     int TransformVPNToPFN(int VPN);
     int HandleFault(int VPN);
     void CreateElements();
-    std::string RunMemory(std::string trace);
+    TraceStats RunMemory(Trace trace);
 };
 
 MemoryController::MemoryController(int set, int index, int pages, int frames, int pageSize) {
