@@ -28,6 +28,8 @@ public:
     bool validBit = false;  // Is the translation of this entry valid?
     int lastUsed = 0;       // Larger means more recently used. 0 means never used.
 
+    PageTableEntry(){}
+
     /** Constructor
     PageTableEntry(int numberOfPFNBits)
     {
