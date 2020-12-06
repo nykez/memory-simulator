@@ -19,12 +19,16 @@
 #include "DataCache/Cache.h"
 namespace PageFaultHandler {
 
+    static int diskReferences = 0;
+
     int HandleFault(PageTable::PageTable* PT, Cache::Cache* DC, int VPNindex) {
         int PFN = FindFreeFrame(PT);        // Find free frame to use.
-        if(PFN == -1)                       // Is there a free frame?
+        if(PFN == -1) {                     // Is there a free frame?
             PFN = LRUReplacePage(PT, DC);   // If not, swap out a frame.
-        PT->entries.at(VPNindex).PFN = PFN; // Update entry's PFN
-        return PFN;                         // Return PFN
+            diskReferences++;               // We touched disk.
+        }
+        PT->entries.at(VPNindex).PFN = PFN; // Update entry's PFN.
+        return PFN;                         // Return PFN.
     }
 
     /// <summary>
