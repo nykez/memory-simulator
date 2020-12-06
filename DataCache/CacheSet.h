@@ -83,6 +83,12 @@ public:
         
     }
 
+    // TODO:
+    int Invalidate()
+    {
+
+    }
+
 
     // is entry set dirty bit?
     bool LRU_IsEntryDirtyBit()
