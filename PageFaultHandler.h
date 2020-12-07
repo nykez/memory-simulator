@@ -21,10 +21,14 @@ namespace PageFaultHandler {
 
     static int diskReferences = 0;
 
-    int HandleFault(PageTable::PageTable* PT, Cache::Cache* DC, int VPNindex) {
+    int HandleFault(PageTable* PT, int VPNindex);
+    int FindFreeFrame(PageTable* PT);
+    int LRUReplacePage(PageTable* PT);
+
+    int HandleFault(PageTable* PT, int VPNindex) {
         int PFN = FindFreeFrame(PT);        // Find free frame to use.
         if(PFN == -1) {                     // Is there a free frame?
-            PFN = LRUReplacePage(PT, DC);   // If not, swap out a frame.
+            PFN = LRUReplacePage(PT);   // If not, swap out a frame.
             diskReferences++;               // We touched disk.
         }
         PT->entries.at(VPNindex).PFN = PFN; // Update entry's PFN.
@@ -47,7 +51,7 @@ namespace PageFaultHandler {
     /// </summary>
     /// <param name="PT">pointer to page table</param>
     /// <returns>PFN of victim entry.</returns>
-    int LRUReplacePage(PageTable* PT, Cache::Cache* DC) {
+    int LRUReplacePage(PageTable* PT) {
         int LRU = PT->GetAccessOrdinal();
         int victimPFN;
         int victimVPN = 0;
@@ -64,9 +68,7 @@ namespace PageFaultHandler {
         }        
         // Update victim entry
         PT->SetEntryValidity(victimVPN, false);
-        // Inform TLB and DC of newly invalidated entry
-        //InformTLB(victimVPN);
-        DC->UpdateDirtyEntry(0,0);
+
 
         return victimPFN;
     }

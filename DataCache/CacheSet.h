@@ -1,6 +1,5 @@
 #pragma once
-
-#include <CacheEntry.h>
+#include "CacheEntry.h"
 #include <deque>
 
 using namespace std;
@@ -88,7 +87,7 @@ public:
     // TODO:
     int Invalidate()
     {
-
+        return 0;
     }
 
 

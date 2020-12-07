@@ -9,9 +9,10 @@
 //	Copyright:	    Harrison Pollitte 2020
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma once
+#ifndef ADDR_STRUCTS_H
+#define ADDR_STRUCTS_H
 #include <vector>
-
+#include "BinaryConverter.h"
 
 /// A Logical/Virtual Address
 struct VirtualAddress
@@ -20,6 +21,26 @@ struct VirtualAddress
    std::vector<int> address;    // whole bit address
    std::vector<int> VPN;        // Virtual Page Number
    std::vector<int> offset;     // offset into page
+
+    VirtualAddress(int addrInt, int offsetSize) {
+        std::vector<int> addr = BinaryConverter::ToBitArray(addrInt);
+        // Populate address
+        for(int i = 0; i < addr.size(); i++) 
+        {
+            address.push_back(addr.at(i));
+        }
+        // Populate VPN
+        for(int i = 0; i < addr.size() - offsetSize; i++)
+        {
+            if(offsetSize >= addr.size()) break;
+            VPN.push_back(addr.at(i));
+        }        
+        // Populate offset
+        for(int i = VPN.size(); i < addr.size(); i++) 
+        {
+            offset.push_back(addr.at(i));
+        }
+    }
 
     VirtualAddress(std::vector<int> addr, int offsetSize)
     {
@@ -70,3 +91,4 @@ struct PhysicalAddress
 };
 
 
+#endif

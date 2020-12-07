@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef PAGETABLE_H
 #define PAGETABLE_H
-#include "PageTable/PageTableEntry.h"
-#include "BinaryConverter.h"
+#include "PageTableEntry.h"
+#include "../BinaryConverter.h"
 
 #include <vector>
 #include <cmath>
@@ -47,7 +47,7 @@ PageTable(int totalVirtualPages, int totalFrames, int pageSize);
 /// Given VPN, return mapped PFN.
 /// </summary>
 /// <param name="VPN">Virtual Page Number bit array</param>
-std::pair<bool,int> TranslateVPN(std::vector<int> VPN);
+std::pair<bool,int> TranslateVPN(int VPN);
 
 int GetMaxFrameCount();
 int GetFrameCount();
@@ -76,11 +76,12 @@ PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
     // Populate map with empty entries
     for(int i = 0; i < totalVirtualPages; i++) {
         //entries.push_back(PageTableEntry(PFNBits));
-        entries.emplace_back(PageTableEntry());
+        PageTableEntry PTE;
+        entries.push_back(PTE);
     }
 }
 
-std::pair<bool, int> PageTable::TranslateVPN(std::vector<int> targetVPN)
+std::pair<bool, int> PageTable::TranslateVPN(int VPN)
 {
     pageTableReferences++;
 
@@ -88,23 +89,23 @@ std::pair<bool, int> PageTable::TranslateVPN(std::vector<int> targetVPN)
     std::pair<bool, int> res (true, 0);
     
     // Convert to binary integer
-    int VPNindex = BinaryConverter::ToBinaryInt(targetVPN);
+   // int VPNindex = BinaryConverter::ToBinaryInt(VPN);
 
     // Get entry via indexed VPN
-    PageTableEntry* PTEptr = &entries[VPNindex-1];
+    PageTableEntry PTE = entries.at(VPN-1);
 
     // Is it invalid?
-    if(PTEptr->validBit == false) { // if so, page fault
-        std::cout << "Page fault for entry VPN == " << VPNindex << std::endl;
+    if(PTE.validBit == false) { // if so, page fault
+        std::cout << "Page fault for entry VPN == " << VPN << std::endl;
         res.first = false;
         misses++;
     } else {
-        res.second = PTEptr->PFN;
+        res.second = PTE.PFN;
         hits++;
     }
     
     // Update reference ordinal
-    PTEptr->lastUsed = accessOrdinal;
+    entries.at(VPN-1).lastUsed = accessOrdinal;
     accessOrdinal++;
 
     return res;

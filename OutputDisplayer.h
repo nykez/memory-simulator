@@ -147,12 +147,12 @@ void OutputDisplayer::DisplayReferenceInfo() {
                  traceOutput[i].trace.hexAddress,
                  traceOutput[i].VPN,
                  traceOutput[i].pageOffset,
-                 traceOutput[i].TLBresult,
-                 traceOutput[i].PTresult,
+                 traceOutput[i].TLBresult.c_str(),
+                 traceOutput[i].PTresult.c_str(),
                  traceOutput[i].PFN,
                  traceOutput[i].DCtag,
                  traceOutput[i].DCidx,
-                 traceOutput[i].DCresult);
+                 traceOutput[i].DCresult.c_str());
     }
 }
 
