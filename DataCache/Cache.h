@@ -6,7 +6,9 @@
 class Cache
 {
 public:
-    
+
+    Cache() {}
+
     // Create a new cache
     // We only have 1 in our program but this can easily be expanded out to use data cache and a instruction cache
     // so why not?

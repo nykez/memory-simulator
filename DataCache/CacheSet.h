@@ -9,6 +9,8 @@ class CacheSet
 {
 public:
 
+    CacheSet() {}
+
     // constructor
     CacheSet(int nentries, int setnumber)
     {
