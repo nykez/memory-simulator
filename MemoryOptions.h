@@ -10,7 +10,7 @@ struct MemoryOptions
     int tlbEntries  = 2;    // # of TLB entries
 
     // PT Options
-    int pageCount   = 8;    // # of virtual pages
+    int pageCount   = 64;    // # of virtual pages
     int frameCount  = 4;    // # of physical frames
     int pageSize    = 256;  // size of offsets
     

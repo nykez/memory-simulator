@@ -23,7 +23,7 @@
 class MemoryController {
 private:
     //DTLB TLB;             // our TLB
-    Cache::Cache DC;        // our data cache
+    //Cache DC;        // our data cache
     PageTable PT;           // our page table
     // Configuration
     bool useVirtualMemory; // true: use PT and TLB. False: only use DC
@@ -35,6 +35,7 @@ private:
 
 public:
     /// Constructor: 
+    MemoryController();
     MemoryController(MemoryOptions config);
     /// die
     ~MemoryController();
@@ -50,20 +51,27 @@ public:
 
 };
 
+MemoryController::MemoryController() {
+     PT = PageTable(64, 4, 256);
+    bitCountOffset = (int)log2((double)256);
+    bitCountPFN = (int)log2((double)4);
+    bitCountVPN = (int)log2((double)4);
+}
+
 MemoryController::MemoryController(MemoryOptions config) {
     ///TODO: TLB
-    DC = Cache(config.dcEntries, config.dcSetSize);
+    //DC = Cache(config.dcEntries, config.dcSetSize);
     PT = PageTable(config.pageCount, config.frameCount, config.pageSize);
 
     // Determine bit counts
     bitCountOffset = (int)log2((double)config.pageSize);
     bitCountPFN = (int)log2((double)config.frameCount);
-    bitCountPFN = (int)log2((double)config.pageCount);
+    bitCountVPN = (int)log2((double)config.pageCount);
 
     // Configure controller
-    this->useVirtualMemory = config.useVirt;
-    if(this->useVirtualMemory == false) this->useTLB == false;
-    else this->useTLB = config.useTLB;
+    useVirtualMemory = config.useVirt;
+    if(useVirtualMemory == false) useTLB == false;
+    else useTLB = config.useTLB;
 }
 
 MemoryController::~MemoryController() {
@@ -73,7 +81,7 @@ MemoryController::~MemoryController() {
 
 TraceStats MemoryController::RunMemory(Trace trace) {
     TraceStats traceW(trace);                // track trace events
-    if(this->useVirtualMemory)                   // if we use virtual addresses
+    if(useVirtualMemory)                   // if we use virtual addresses
         TranslateVirtualMemory(&traceW);     // transform into physical address
     return traceW;
 }
@@ -82,7 +90,7 @@ TraceStats MemoryController::RunMemory(Trace trace) {
 void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
     AttachVPNandOffset(traceW);         //Add VPN and pageOffset to traceW
     int PFN = -1;  
-    if(this->useTLB) {                  // if we use DTLB
+    if(useTLB) {                  // if we use DTLB
         PFN = CheckDataTLB(traceW);     // check DTLB first
     } else {                            // if we don't use DTLB
         PFN = CheckPageTable(traceW);   // only check page table
@@ -92,7 +100,7 @@ void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
 
 /// PURPOSE: Generate and attach VPN and offset to a trace
 void MemoryController::AttachVPNandOffset(TraceStats* traceW) {
-    VirtualAddress virtAddr(traceW->trace.hexAddress, this->bitCountOffset);
+    VirtualAddress virtAddr(traceW->trace.hexAddress, bitCountOffset);
     //NOTE: We can make trace hold a bit-array if necessary. We have to change this tho (it isn't hard to change).
     traceW->VPN         = BinaryConverter::ToBinaryInt(virtAddr.VPN);
     traceW->pageOffset  = BinaryConverter::ToBinaryInt(virtAddr.offset);
@@ -125,6 +133,7 @@ int MemoryController::CheckPageTable(TraceStats* traceW) {
 }
 
 int MemoryController::HandlePageFault(int VPN) {
-    PageFaultHandler::HandleFault(&PT, &DC, VPN);
+    //return PageFaultHandler::HandleFault(&PT, &DC, VPN);
+    return PageFaultHandler::HandleFault(&PT, VPN);
 }
 #endif

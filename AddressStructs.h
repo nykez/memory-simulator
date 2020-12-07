@@ -30,7 +30,7 @@ struct VirtualAddress
             address.push_back(addr.at(i));
         }
         // Populate VPN
-        for(int i = 0; i < addr.size() - offsetSize; i++)
+        for(int i = 0; i < addr.size() - offsetSize && i > 0; i++)
         {
             VPN.push_back(addr.at(i));
         }        
