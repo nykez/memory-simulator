@@ -14,18 +14,16 @@ struct Trace
 {
 public:
     AccessType accessType;
-    std::string hexAddress;
+    int hexAddress;
 
     Trace() {
         accessType = AccessType::Read;
-        hexAddress = "000000000";       //NOTE: A string with 9 chars has 10 chars (NULL)
+        hexAddress = 0;       //NOTE: A string with 9 chars has 10 chars (NULL)
     }
 
-    Trace(int access, std::string& addr) {
+    Trace(int access, int addr) {
         accessType = (AccessType)access;
-        hexAddress.clear();
         hexAddress = addr;
-        hexAddress.shrink_to_fit();
     }
 };
 

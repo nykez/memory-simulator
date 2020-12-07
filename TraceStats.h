@@ -12,13 +12,13 @@
 struct TraceStats
 {
     Trace trace;            // original trace (<accessType>:<hexaddress>)
-    std::string VPN         = "0";  // HEX
-    std::string pageOffset  = "0";  // HEX
+    int VPN                 = 0;    // HEX
+    int pageOffset          = 0;    // HEX
     std::string TLBresult   = "NA"; // HIT/MISS/NA
     std::string PTresult    = "NA"; // HIT/MISS/NA
-    std::string PFN         = "0";  // HEX
-    std::string DCtag       = "0";  // HEX
-    std::string DCidx       = "0";  // HEX
-    std::string DCresult    = "0";  // HIT/MISS
+    int PFN                 = 0;    // HEX
+    int DCtag               = 0;    // HEX
+    int DCidx               = 0;    // HEX
+    std::string DCresult    = "MISS";    // HIT/MISS
 };
 #endif
