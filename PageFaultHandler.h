@@ -32,6 +32,7 @@ namespace PageFaultHandler {
             diskReferences++;               // We touched disk.
         }
         PT->entries.at(VPNindex).PFN = PFN; // Update entry's PFN.
+        PT->SetEntryValidity(VPNindex, true); // set as now valid
         return PFN;                         // Return PFN.
     }
 
@@ -41,8 +42,11 @@ namespace PageFaultHandler {
     /// <param name="PT">pointer to page table</param>
     /// <returns>PFN of free frame. -1 if no free frames.</returns>
     int FindFreeFrame(PageTable* PT) {
-       if(PT->GetFrameCount() < PT->GetMaxFrameCount())
-           return PT->GetFrameCount();
+       if(PT->GetFrameCount() < PT->GetMaxFrameCount()) {
+           int PFN = PT->GetFrameCount();
+           PT->AllocateFrame();
+           return PFN;
+       }
        return -1;
     }
 
@@ -68,7 +72,6 @@ namespace PageFaultHandler {
         }        
         // Update victim entry
         PT->SetEntryValidity(victimVPN, false);
-
 
         return victimPFN;
     }

@@ -67,6 +67,9 @@ void SimulationDeployer::RunProgram() {
         outputDisplayer.AddReferenceInfo(traceStats[i]);
     }
     
+    HardwareStats PTstats = MC.GetPTStats();
+    outputDisplayer.FeedPTStats(PTstats);
+
     outputDisplayer.DisplayAll();
 }
 

@@ -139,8 +139,8 @@ void OutputDisplayer::DisplayConfig() {
 }
 
 void OutputDisplayer::DisplayReferenceInfo() {
-    printf("Virtual  Virt.  Page TLB  PT   Phys  DC    DC  DC  \n");
-    printf("Address  Page#  Off. Res. Res. Page# Tag   Idx Res.\n");
+    printf("Virtual  Virt.  Page TLB  PT   Phys    DC  DC      \n");
+    printf("Address  Page # Off. Res. Res. Pg # DC Tag Idx Res.\n");
     printf("-------- ------ ---- ---- ---- ---- ------ --- ----\n");
     for(int i = 0; i < this->traceOutput.size(); i++) {
         printf("%08x %6x %4x %4s %4s %4x %6x %3x %4s\n", 

@@ -18,6 +18,7 @@
 #include "TraceStats.h"
 #include "MemoryOptions.h"
 #include "AddressStructs.h"
+#include "HardwareStats.h"
 #include <cmath>
 
 class MemoryController {
@@ -49,7 +50,13 @@ public:
     void TranslateVirtualMemory(TraceStats* traceW);
     void AttachVPNandOffset(TraceStats* traceW);
 
+    HardwareStats GetPTStats();
+    HardwareStats GetDTLBStats();
+    HardwareStats GetDCStats();
+
 };
+
+
 
 MemoryController::MemoryController() {
      PT = PageTable(64, 4, 256);
@@ -95,7 +102,7 @@ void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
     } else {                            // if we don't use DTLB
         PFN = CheckPageTable(traceW);   // only check page table
     }
-
+    traceW->PFN = PFN;                  // assign PFN
 }
 
 /// PURPOSE: Generate and attach VPN and offset to a trace
@@ -136,4 +143,11 @@ int MemoryController::HandlePageFault(int VPN) {
     //return PageFaultHandler::HandleFault(&PT, &DC, VPN);
     return PageFaultHandler::HandleFault(&PT, VPN);
 }
+
+HardwareStats MemoryController::GetPTStats() {
+    HardwareStats PTstats(PT.GetHitCount(), PT.GetMissCount());
+    return PTstats;
+}
+
+
 #endif
