@@ -18,6 +18,10 @@ struct HardwareStats {
     int misses = 0;         // number of fails
     double hitrate = 0.0;   // hits / (hits + misses)
 
+    HardwareStats() {
+        
+    }
+
     ///<summary>
     /// Constructor
     ///</summary>
