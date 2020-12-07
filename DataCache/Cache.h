@@ -39,16 +39,17 @@ public:
     }
 
     // Get a entry from a set
-    bool GetEntry()
+    bool GetEntry(int index, int tag)
     {
+        return Sets->at(index)->GetEntry(tag);
 
         return false;
     }
 
     // Add a entry to a set
-    void AddEntry()
+    void AddEntry(int index, int tag, int dirtyBit)
     {
-
+        Sets->at(index)->AddEntry(tag, dirtyBit);
     }
 
     // Update big inside a set of a entry
