@@ -58,6 +58,9 @@ void SetEntryDirty(int VPN, bool state);
 bool GetEntryDirty(int VPN);
 void SetEntryPFN(int VPN, int PFN);
 int GetEntryPFN(int VPN);
+int GetHitCount();
+int GetMissCount();
+void AllocateFrame();
 };
 
 
@@ -92,10 +95,11 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
    // int VPNindex = BinaryConverter::ToBinaryInt(VPN);
 
     // Get entry via indexed VPN
-    PageTableEntry PTE = entries.at(VPN-1);
+    PageTableEntry PTE = entries.at(VPN);
 
     // Is it invalid?
     if(PTE.validBit == false) { // if so, page fault
+        printf("INPUT: %d | PTE: PFN = %d, V = %d, D = %d, L = %d\n", VPN, PTE.PFN, PTE.validBit, PTE.dirtyBit, PTE.lastUsed);
         std::cout << "Page fault for entry VPN == " << VPN << std::endl;
         res.first = false;
         misses++;
@@ -105,7 +109,7 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
     }
     
     // Update reference ordinal
-    entries.at(VPN-1).lastUsed = accessOrdinal;
+    entries.at(VPN).lastUsed = accessOrdinal;
     accessOrdinal++;
 
     return res;
@@ -117,6 +121,11 @@ int PageTable::GetMaxFrameCount() {
 
 int PageTable::GetFrameCount() {
     return frameCount;
+}
+
+void PageTable::AllocateFrame() {
+    if(frameCount < maxFrameCount)
+        frameCount++;
 }
 
 int PageTable::GetAccessOrdinal() {
@@ -146,5 +155,15 @@ void PageTable::SetEntryPFN(int VPN, int PFN) {
 int PageTable::GetEntryPFN(int VPN) {
     return entries.at(VPN).PFN;
 }
+
+int PageTable::GetHitCount() {
+    return hits;
+}
+
+int PageTable::GetMissCount() {
+    return misses;
+}
+
+
 
 #endif
