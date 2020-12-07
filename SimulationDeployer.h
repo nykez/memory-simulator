@@ -3,9 +3,10 @@
 /// AUTHOR: Harrison Lee Pollitte
 /// CREATED: 12/6/2020
 /// NOTES:
-///
-///
-///
+/// * Where we start program (after main)
+/// * Calls InputHandler to get input, then calls MemoryController to run simulation
+/// * Then calls OutputDisplayer to display output. 
+/// * It also does math for counting number of bits and shit and stuff
 
 #ifndef SIM_DEP_H
 #define SIM_DEP_H
