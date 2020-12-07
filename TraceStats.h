@@ -20,5 +20,13 @@ struct TraceStats
     int DCtag               = 0;    // HEX
     int DCidx               = 0;    // HEX
     std::string DCresult    = "MISS";    // HIT/MISS
+
+    TraceStats() {
+
+    }
+
+    TraceStats(Trace tr) {
+        trace = tr;
+    }
 };
 #endif
