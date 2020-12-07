@@ -1,7 +1,7 @@
 #ifndef MEM_CON_H
 #define MEM_CON_H
 #include "DataCache/Cache.h"
-#include "PageTable.h"
+#include "PageTable/PageTable.h"
 #include "BinaryConverter.h"
 #include "PageFaultHandler.h"
 #include "Trace.h"
