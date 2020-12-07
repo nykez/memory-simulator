@@ -6,6 +6,8 @@
 /// *
 /// *
 
+#ifndef REF_STATS_H
+#define REF_STATS_H
 struct ReferenceStats
 {
     int pageTableRefCount = 0;  // times we touched page table.
@@ -22,3 +24,4 @@ struct ReferenceStats
         diskRefCount = disk;
     }
 };
+#endif

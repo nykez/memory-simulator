@@ -31,9 +31,6 @@ public:
     void FeedConfigOutput(MemoryOptions mem);
 
     /// PURPOSE: Add to traceOutput
-    void AddTrace(Trace newTrace);
-    
-    /// PURPOSE: Add to traceOutput
     void AddReferenceInfo(TraceStats referenceInfo); 
 
     /// PURPOSE: Set TLBOutput
@@ -114,19 +111,19 @@ void OutputDisplayer::DisplayAll() {
 void OutputDisplayer::DisplayConfig() {
     printf("Data TLB contains %d entries.\n", configOutput.tlbEntries);
     printf("\n");
-    printf("Number of virtual pages is %d\n", configOutput.pageCount);
-    printf("Number of physical frames is %d\n", configOutput.frameCount);
-    printf("Each page contains %d bytes\n", configOutput.pageSize);
+    printf("Number of virtual pages is %d.\n", configOutput.pageCount);
+    printf("Number of physical frames is %d.\n", configOutput.frameCount);
+    printf("Each page contains %d bytes.\n", configOutput.pageSize);
     printf("Number of bits for page-table index is [PLACEHOLDER].\n");
     printf("Number of bits for page offset is [PLACEHOLDER].\n");
     printf("\n");
     printf("Data cache contains %d sets.\n", configOutput.dcEntries);
     printf("Each set contains %d entries.\n", configOutput.dcSetSize);
     printf("Each line is %d bytes.\n", configOutput.dcLineSize);
-    printf("The set uses a [PLACEHOLDER] policy");
-    printf("Number of bits used for the tag is [PLACEHOLDER].");
-    printf("Number of bits used for the index  is [PLACEHOLDER].");
-    printf("Number of bits used for the offset is [PLACEHOLDER].");
+    printf("The set uses a [PLACEHOLDER] policy\n");
+    printf("Number of bits used for the tag is [PLACEHOLDER].\n");
+    printf("Number of bits used for the index  is [PLACEHOLDER].\n");
+    printf("Number of bits used for the offset is [PLACEHOLDER].\n");
     printf("\n");
     if(configOutput.useVirt) {
         printf("The addresses read in are VIRTUAL addresses.\n");
@@ -142,11 +139,11 @@ void OutputDisplayer::DisplayConfig() {
 }
 
 void OutputDisplayer::DisplayReferenceInfo() {
-    printf("Virtual  Virt.  Page TLB  PT   Phys          DC  DC  \n");
-    printf("Address  Page # Off. Res. Res. Page # DC Tag Idx Res.\n");
-    printf("-------  ------ ---- ---- ---- ------ ------ --- ----\n");
+    printf("Virtual  Virt.  Page TLB  PT   Phys  DC    DC  DC  \n");
+    printf("Address  Page#  Off. Res. Res. Page# Tag   Idx Res.\n");
+    printf("-------- ------ ---- ---- ---- ---- ------ --- ----\n");
     for(int i = 0; i < this->traceOutput.size(); i++) {
-        printf("%08x %6x %4x %4s %4s %4x %6x %3x %4s", 
+        printf("%08x %6x %4x %4s %4s %4x %6x %3x %4s\n", 
                  traceOutput[i].trace.hexAddress,
                  traceOutput[i].VPN,
                  traceOutput[i].pageOffset,
@@ -160,7 +157,7 @@ void OutputDisplayer::DisplayReferenceInfo() {
 }
 
 void OutputDisplayer::DisplayComponentStats() {
-    printf("Simulation Statistics\n");
+    printf("\n\nSimulation Statistics\n");
     printf("---------------------\n");
     printf("\n");
     printf("Data TLB hits        : %d\n", TLBOutput.hits);
