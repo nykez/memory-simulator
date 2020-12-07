@@ -17,15 +17,21 @@
 #include "Trace.h"
 #include "TraceStats.h"
 #include "MemoryOptions.h"
+#include "AddressStructs.h"
+#include <cmath>
+
 class MemoryController {
 private:
     //DTLB TLB;             // our TLB
     Cache::Cache DC;        // our data cache
     PageTable PT;           // our page table
-
     // Configuration
-    bool useVirtualMemory;  // true: use PT and TLB. False: only use DC
+    bool useVirtualMemory; // true: use PT and TLB. False: only use DC
     bool useTLB;            // true: use PT,TLB,DC. False: use PT, DC
+
+    int bitCountOffset;
+    int bitCountVPN;
+    int bitCountPFN;
 
 public:
     /// Constructor: 
@@ -35,19 +41,24 @@ public:
 
     // public interface for using controller.
     TraceStats RunMemory(Trace trace);
-
-    
-    int TransformVPNToPFN(int VPN);
-
+    int CheckPageTable(TraceStats* traceW);
+    int CheckDataTLB(TraceStats* traceW);
     /// Calls pagefault handler
-    int HandleFault(int VPN);
-    
+    int HandlePageFault(int VPN);
+    void TranslateVirtualMemory(TraceStats* traceW);
+    void AttachVPNandOffset(TraceStats* traceW);
+
 };
 
 MemoryController::MemoryController(MemoryOptions config) {
     ///TODO: TLB
     DC = Cache(config.dcEntries, config.dcSetSize);
     PT = PageTable(config.pageCount, config.frameCount, config.pageSize);
+
+    // Determine bit counts
+    bitCountOffset = (int)log2((double)config.pageSize);
+    bitCountPFN = (int)log2((double)config.frameCount);
+    bitCountPFN = (int)log2((double)config.pageCount);
 
     // Configure controller
     this->useVirtualMemory = config.useVirt;
@@ -59,50 +70,61 @@ MemoryController::~MemoryController() {
 }
 
 
+
 TraceStats MemoryController::RunMemory(Trace trace) {
-    if(this->useVirtualMemory) {
-        // convert trace.hexAddr to VPN 
-        int VPN = 0;
+    TraceStats traceW(trace);                // track trace events
+    if(this->useVirtualMemory)                   // if we use virtual addresses
+        TranslateVirtualMemory(&traceW);     // transform into physical address
+    return traceW;
+}
+
+/// PURPOSE: Convert virtual addr to physical addr
+void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
+    AttachVPNandOffset(traceW);         //Add VPN and pageOffset to traceW
+    int PFN = -1;  
+    if(this->useTLB) {                  // if we use DTLB
+        PFN = CheckDataTLB(traceW);     // check DTLB first
+    } else {                            // if we don't use DTLB
+        PFN = CheckPageTable(traceW);   // only check page table
     }
 
 }
 
-int MemoryController::UseTLB(int VPN) {
-    int PFN = -1;
-    std::pair<bool,int> res = {false, 0}; // PLACEHOLDER
-    if(res.first == false)  {             // TLB MISS
-        
+/// PURPOSE: Generate and attach VPN and offset to a trace
+void MemoryController::AttachVPNandOffset(TraceStats* traceW) {
+    VirtualAddress virtAddr(traceW->trace.hexAddress, this->bitCountOffset);
+    //NOTE: We can make trace hold a bit-array if necessary. We have to change this tho (it isn't hard to change).
+    traceW->VPN         = BinaryConverter::ToBinaryInt(virtAddr.VPN);
+    traceW->pageOffset  = BinaryConverter::ToBinaryInt(virtAddr.offset);
+}
+
+/// PURPOSE: Check DTLB for PFN of given VPN
+int MemoryController::CheckDataTLB(TraceStats* traceW) {
+    std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
+    res = {false, 0};                       // PLACEHOLDER for TLB
+    if(res.first == false) {                // if TLB MISS
+        traceW->TLBresult = "MISS";         // | log MISS
+        return CheckPageTable(traceW);      // | return PFN from page table
+    } else {                                // if TLB HIT
+        traceW->TLBresult = "HIT";          // | log HIT
+        return res.second;                  // | return PFN from TLB
+    }
+} 
+
+/// PURPOSE: Check page table for PFN of a given VPN
+int MemoryController::CheckPageTable(TraceStats* traceW) {
+    std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
+    res = PT.TranslateVPN(traceW->VPN);     // check page table
+    if(res.first == false) {                // if PT MISS
+        traceW->PTresult = "MISS";          // | log MISS
+        return HandlePageFault(traceW->VPN);// | return PFN from page fault handler
+    } else {                                // if PT HIT
+        traceW->PTresult = "HIT";           // | log HIT
+        return res.second;                  // | return PFN from PT
     }
 }
-/* TLB FALSE (INPUT: Trace trace {AccessType accessType, std::string hexAddress})
-std::vector<int> VPNarr = BinaryConverter::ToBitArray(VPN);
-int PFN = -1;
-std::pair<bool,int> res = PT.TranslateVPN(VPNarr);
-if(res.first == false)
-    PFN = HandleFault(VPN);
-else PFN =res.second;
-return PFN;
-*/
 
-/* VirtAddr FALSE
-std::vector<int> 
-
-*/
-int MemoryController::TransformVPNToPFN(int VPN) {
-    std::vector<int> VPNarr = BinaryConverter::ToBitArray(VPN);
-    int PFN = -1;
-    //std::pair<bool,int> res = TLB.Translate(VPN);
-    std::pair<bool,int> res = {false, 0}; //PLACEHOLDER
-    if(res.first == false) {                // TLB MISS
-        res = PT.TranslateVPN(VPNarr);      // Check PT
-        if(res.first == false) {            // PT MISS
-        PFN = HandleFault(VPN);             // PageFault
-        } else PFN = res.second;            // PT HIT
-    } else PFN = res.second;                // TLB HIT
-    return PFN;                             // Return PFN
-}
-
-int MemoryController::HandleFault(int VPN) {
+int MemoryController::HandlePageFault(int VPN) {
     PageFaultHandler::HandleFault(&PT, &DC, VPN);
 }
 #endif
