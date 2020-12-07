@@ -1,3 +1,13 @@
+/// NAME: MemoryControler
+/// PURPOSE: Manages interactions between PT, TLB, and DC.
+///         Including Evictions, control flow, and returns to Simulation.
+/// AUTHOR: Harrison Lee Pollitte
+/// CREATED: 12/6/2020
+/// NOTES:
+/// * Called by SimulationRunner
+/// * Software Manager of our memory components.
+/// * Linker between them all. Return most stuff to here.
+
 #ifndef MEM_CON_H
 #define MEM_CON_H
 #include "DataCache/Cache.h"
