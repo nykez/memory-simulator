@@ -76,7 +76,8 @@ PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
     // Populate map with empty entries
     for(int i = 0; i < totalVirtualPages; i++) {
         //entries.push_back(PageTableEntry(PFNBits));
-        entries.emplace_back(PageTableEntry());
+        PageTableEntry PTE;
+        entries.push_back(PTE);
     }
 }
 
@@ -91,20 +92,20 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
    // int VPNindex = BinaryConverter::ToBinaryInt(VPN);
 
     // Get entry via indexed VPN
-    PageTableEntry* PTEptr = &entries[VPN-1];
+    PageTableEntry PTE = entries.at(VPN-1);
 
     // Is it invalid?
-    if(PTEptr->validBit == false) { // if so, page fault
+    if(PTE.validBit == false) { // if so, page fault
         std::cout << "Page fault for entry VPN == " << VPN << std::endl;
         res.first = false;
         misses++;
     } else {
-        res.second = PTEptr->PFN;
+        res.second = PTE.PFN;
         hits++;
     }
     
     // Update reference ordinal
-    PTEptr->lastUsed = accessOrdinal;
+    entries.at(VPN-1).lastUsed = accessOrdinal;
     accessOrdinal++;
 
     return res;

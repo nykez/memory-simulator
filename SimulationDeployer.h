@@ -52,7 +52,7 @@ void SimulationDeployer::GatherInput() {
     traces.emplace_back(Trace(0,0x148));
     traces.emplace_back(Trace(0,0x144));
     traces.emplace_back(Trace(0,0xC80));
-    traces.emplace_back(Trace(0,0x008));
+    //traces.emplace_back(Trace(0,0x008)); BREAKS FOR THIS
 }
 
 void SimulationDeployer::RunProgram() {
@@ -67,7 +67,7 @@ void SimulationDeployer::RunProgram() {
         outputDisplayer.AddReferenceInfo(traceStats[i]);
     }
     
-    outputDisplayer.DisplayReferenceInfo();
+    outputDisplayer.DisplayAll();
 }
 
 

@@ -30,8 +30,9 @@ struct VirtualAddress
             address.push_back(addr.at(i));
         }
         // Populate VPN
-        for(int i = 0; i < addr.size() - offsetSize && i > 0; i++)
+        for(int i = 0; i < addr.size() - offsetSize; i++)
         {
+            if(offsetSize >= addr.size()) break;
             VPN.push_back(addr.at(i));
         }        
         // Populate offset
