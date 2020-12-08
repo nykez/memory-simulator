@@ -26,6 +26,8 @@ private:
     //DTLB TLB;             // our TLB
     Cache *DC;             // our data cache
     PageTable PT;           // our page table
+
+    MemoryOptions MemConfig;
     // Configuration
     bool useVirtualMemory;  // true: use PT and TLB. False: only use DC
     bool useTLB;            // true: use PT,TLB,DC. False: use PT, DC
@@ -53,8 +55,11 @@ public:
     HardwareStats GetPTStats();
     HardwareStats GetDTLBStats();
     HardwareStats GetDCStats();
+    MemoryOptions GetConfigOptions();
+
 
 };
+
 
 
 
@@ -76,7 +81,9 @@ MemoryController::MemoryController(MemoryOptions config) {
     // calculate offset bits
     config.cacheOffsetBits = log2(config.dcLineSize);
     // calculate tag bits
-    config.cacheTagBits = config.pageSize / (config.dcTotalSets * config.dcLineSize);
+    config.cacheTagBits = log2(config.pageSize) + log2(config.frameCount) - config.cacheIndexBits - config.cacheOffsetBits;
+
+    cout << config.cacheTagBits << endl;
 
     DC = new Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
 
@@ -92,12 +99,17 @@ MemoryController::MemoryController(MemoryOptions config) {
     useVirtualMemory = config.useVirt;
     if(useVirtualMemory == false) useTLB == false;
     else useTLB = config.useTLB;
+
+    MemConfig = config;
 }
 
 MemoryController::~MemoryController() {
 }
 
-
+MemoryOptions MemoryController::GetConfigOptions()
+{
+    return MemConfig;
+}
 
 TraceStats MemoryController::RunMemory(Trace trace) {
     TraceStats traceW(trace);                // track trace events

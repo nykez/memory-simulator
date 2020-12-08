@@ -25,6 +25,7 @@ private:
     OutputDisplayer outputDisplayer;
     MemoryController MC;        //ptr to MemoryController of this program simulation
     vector<Trace> traces;
+    MemoryOptions MO;
 public:
     SimulationDeployer();
     ~SimulationDeployer();
@@ -33,7 +34,6 @@ public:
 };
 
 SimulationDeployer::SimulationDeployer() {
-    MemoryOptions MO;
     MC = MemoryController(MO);
 }
 
@@ -68,6 +68,9 @@ void SimulationDeployer::RunProgram() {
     }
     
     HardwareStats PTstats = MC.GetPTStats();
+    MemoryOptions Options = MC.GetConfigOptions();
+
+    outputDisplayer.FeedConfigOutput(Options);
     outputDisplayer.FeedPTStats(PTstats);
 
     outputDisplayer.DisplayAll();
