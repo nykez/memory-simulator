@@ -1,7 +1,8 @@
-#pragma once
+#ifndef CACHE_H
+#define CACHE_H
 
 #include <vector>
-#include <CacheSet.h>
+#include "CacheSet.h"
 
 class Cache
 {
@@ -65,10 +66,4 @@ private:
     int SetSize; // set size
 };
 
-
-/*
-
-
-
-
-*/
+#endif

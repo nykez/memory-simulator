@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CACHEENTRY_H
+#define CACHEENTRY_H
+
 class CacheEntry
 {
 private:
@@ -46,3 +48,5 @@ public:
         return DirtyBit;
     }
 };
+
+#endif

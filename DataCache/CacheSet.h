@@ -1,6 +1,8 @@
-#pragma once
-#include "CacheEntry.h"
+#ifndef CACHESET_H
+#define CACHESET_H
+
 #include <deque>
+#include "CacheEntry.h"
 
 using namespace std;
 
@@ -102,3 +104,5 @@ private:
     int SetNumber;
     std::deque<CacheEntry*> *Entries;
 };
+
+#endif
