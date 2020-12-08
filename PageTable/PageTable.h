@@ -12,10 +12,8 @@
 #ifndef PAGETABLE_H
 #define PAGETABLE_H
 #include "../TableEntry.h"
-#include "../BinaryConverter.h"
 
 #include <vector>
-#include <cmath>
 #include <iostream>
 
 class PageTable {
@@ -49,6 +47,10 @@ PageTable(int totalVirtualPages, int totalFrames, int pageSize);
 /// <param name="VPN">Virtual Page Number bit array</param>
 std::pair<bool,int> TranslateVPN(int VPN);
 
+/// <summary>
+/// Parameterized constructor
+/// </summary>
+/// <returns>Max allowable framecount</returns>
 int GetMaxFrameCount();
 int GetFrameCount();
 int GetAccessOrdinal();
@@ -61,7 +63,12 @@ int GetEntryPFN(int VPN);
 int GetHitCount();
 int GetMissCount();
 int GetEntryAccessOrdinal(int VPN);
-void AllocateFrame();
+
+/// <summary>"Allocates frame". Increments 
+/// number of in-use frames in the page table.
+/// </summary>
+/// <returns> -1: full. Else, PFN of allocated frame. </returns>
+int AllocateFrame();
 };
 
 
@@ -115,9 +122,13 @@ int PageTable::GetFrameCount() {
     return frameCount;
 }
 
-void PageTable::AllocateFrame() {
-    if(frameCount < maxFrameCount)
+int PageTable::AllocateFrame() {
+    int PFN = -1;
+    if(frameCount < maxFrameCount) {
+        PFN = frameCount;
         frameCount++;
+    }
+    return PFN;
 }
 
 int PageTable::GetAccessOrdinal() {

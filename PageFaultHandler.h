@@ -28,11 +28,11 @@ namespace PageFaultHandler {
     int HandleFault(PageTable* PT, int VPNindex) {
         int PFN = FindFreeFrame(PT);        // Find free frame to use.
         if(PFN == -1) {                     // Is there a free frame?
-            PFN = LRUReplacePage(PT);   // If not, swap out a frame.
+            PFN = LRUReplacePage(PT);       // If not, swap out a frame.
             diskReferences++;               // We touched disk.
         }
         PT->entries.at(VPNindex).PFN = PFN; // Update entry's PFN.
-        PT->SetEntryValidity(VPNindex, true); // set as now valid
+        PT->SetEntryValidity(VPNindex,true);// Set as now valid.
         return PFN;                         // Return PFN.
     }
 
@@ -42,12 +42,7 @@ namespace PageFaultHandler {
     /// <param name="PT">pointer to page table</param>
     /// <returns>PFN of free frame. -1 if no free frames.</returns>
     int FindFreeFrame(PageTable* PT) {
-       if(PT->GetFrameCount() < PT->GetMaxFrameCount()) {
-           int PFN = PT->GetFrameCount();
-           PT->AllocateFrame();
-           return PFN;
-       }
-       return -1;
+        return PT->AllocateFrame();
     }
 
     /// <summary>
@@ -65,9 +60,9 @@ namespace PageFaultHandler {
             if(PT->GetEntryValidity(i) == false) continue;
             // If least recent so far...
             if(PT->GetEntryAccessOrdinal(i) < LRU) {
-                LRU = PT->entries.at(i).lastUsed;   // update comparer
-                victimPFN = PT->GetEntryPFN(i);     // and update PFN
-                victimVPN = i;
+                LRU = PT->GetEntryAccessOrdinal(i); // Update comparer,
+                victimPFN = PT->GetEntryPFN(i);     // update PFN,
+                victimVPN = i;                      // and update VPN
             }
         }        
         // Update victim entry
