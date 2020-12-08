@@ -15,8 +15,8 @@ struct MemoryOptions
     int pageSize    = 256;  // size of offsets
     
     // DC Options
-    int dcEntries   = 4;    // # of cache entries
-    int dcSetSize   = 1;    // size of cache sets
+    int dcEntries   = 1;    // # of cache entries
+    int dcTotalSets   = 4;    // size of cache sets
     int dcLineSize  = 16;    // size of cache lines
     int dcPolicy    = 0;    // write policy for cache
 

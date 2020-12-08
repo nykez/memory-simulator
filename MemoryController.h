@@ -73,7 +73,7 @@ MemoryController::MemoryController(MemoryOptions config) {
     ///TODO: TLB
 
     // create data cache
-    DC = Cache(config.dcSetSize, config.dcEntries);
+    DC = Cache(config.dcTotalSets, config.dcEntries);
 
     // create page table
     PT = PageTable(config.pageCount, config.frameCount, config.pageSize);
@@ -111,6 +111,8 @@ void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
         PFN = CheckPageTable(traceW);   // only check page table
     }
     traceW->PFN = PFN;                  // assign PFN
+
+
 }
 
 /// PURPOSE: Generate and attach VPN and offset to a trace

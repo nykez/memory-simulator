@@ -117,8 +117,8 @@ void OutputDisplayer::DisplayConfig() {
     printf("Number of bits for page-table index is [PLACEHOLDER].\n");
     printf("Number of bits for page offset is [PLACEHOLDER].\n");
     printf("\n");
-    printf("Data cache contains %d sets.\n", configOutput.dcEntries);
-    printf("Each set contains %d entries.\n", configOutput.dcSetSize);
+    printf("Data cache contains %d sets.\n", configOutput.dcTotalSets);
+    printf("Each set contains %d entries.\n", configOutput.dcEntries);
     printf("Each line is %d bytes.\n", configOutput.dcLineSize);
     printf("The set uses a [PLACEHOLDER] policy\n");
     printf("Number of bits used for the tag is [PLACEHOLDER].\n");
