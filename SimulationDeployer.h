@@ -76,20 +76,3 @@ void SimulationDeployer::RunProgram() {
 
 
 #endif //SIM_DEP_H
-
-class Mock_InputReader
-{
-private:
-    /* data */
-public:
-    Mock_InputReader(/* args */);
-    ~Mock_InputReader();
-};
-
-Mock_InputReader::Mock_InputReader(/* args */)
-{
-}
-
-Mock_InputReader::~Mock_InputReader()
-{
-}
