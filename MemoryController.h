@@ -36,6 +36,12 @@ private:
     int bitCountVPN;        // number of bits for VPN
     int bitCountPFN;        // number of bits for PFN
 
+    int CheckPageTable(TraceStats* traceW);
+    int CheckDataTLB(TraceStats* traceW);
+    int HandlePageFault(int VPN);
+    void TranslateVirtualMemory(TraceStats* traceW);
+    void AttachVPNandOffset(TraceStats* traceW);
+
 public:
     /// Constructor: 
     MemoryController();
@@ -45,18 +51,10 @@ public:
 
     // public interface for using controller.
     TraceStats RunMemory(Trace trace);
-    int CheckPageTable(TraceStats* traceW);
-    int CheckDataTLB(TraceStats* traceW);
-    /// Calls pagefault handler
-    int HandlePageFault(int VPN);
-    void TranslateVirtualMemory(TraceStats* traceW);
-    void AttachVPNandOffset(TraceStats* traceW);
-
     HardwareStats GetPTStats();
     HardwareStats GetDTLBStats();
     HardwareStats GetDCStats();
     MemoryOptions GetConfigOptions();
-
 
 };
 
@@ -105,11 +103,11 @@ MemoryController::MemoryController(MemoryOptions config) {
 MemoryController::~MemoryController() {
 }
 
-MemoryOptions MemoryController::GetConfigOptions()
-{
+MemoryOptions MemoryController::GetConfigOptions() {
     return MemConfig;
 }
 
+/// PURPOSE: Runs memory simulation
 TraceStats MemoryController::RunMemory(Trace trace) {
     TraceStats traceW(trace);                // track trace events
     if(useVirtualMemory)                   // if we use virtual addresses
@@ -140,6 +138,7 @@ void MemoryController::AttachVPNandOffset(TraceStats* traceW) {
 }
 
 /// PURPOSE: Check DTLB for PFN of given VPN
+/// RETURNS: PFN
 int MemoryController::CheckDataTLB(TraceStats* traceW) {
     std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
     res = {false, 0};                       // PLACEHOLDER for TLB
@@ -153,6 +152,7 @@ int MemoryController::CheckDataTLB(TraceStats* traceW) {
 } 
 
 /// PURPOSE: Check page table for PFN of a given VPN
+/// RETURNS: PFN
 int MemoryController::CheckPageTable(TraceStats* traceW) {
     std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
     res = PT.TranslateVPN(traceW->VPN);     // check page table
@@ -165,14 +165,17 @@ int MemoryController::CheckPageTable(TraceStats* traceW) {
     }
 }
 
+/// PURPOSE: Handle a page fault
+/// RETURNS: PFN
 int MemoryController::HandlePageFault(int VPN) {
     //return PageFaultHandler::HandleFault(&PT, &DC, VPN);
     return PageFaultHandler::HandleFault(&PT, VPN);
 }
 
+/// PURPOSE: Get stats of page table
+/// RETURNS: HardwareStats of page table
 HardwareStats MemoryController::GetPTStats() {
-    HardwareStats PTstats(PT.GetHitCount(), PT.GetMissCount());
-    return PTstats;
+    return PT.GetStatistics();
 }
 
 

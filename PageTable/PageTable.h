@@ -12,10 +12,13 @@
 #ifndef PAGETABLE_H
 #define PAGETABLE_H
 #include "../TableEntry.h"
-
+#include "../HardwareStats.h"
 #include <vector>
 #include <iostream>
 
+/// <summary>
+/// Holds page entries. Resides in main memory.
+/// </summary>
 class PageTable {
 private:
 //int pageSize = 0;
@@ -25,11 +28,9 @@ int accessOrdinal = 1;               // largest == most recently used.
 int pageTableReferences = 0;         // amount of times we've referenced this table
 int hits = 0;                        // number of page table hits
 int misses = 0;                      // number of page table misses
+std::vector<TableEntry> entries;     //[TODO]: map <VPN,PTE>
 
-
-public:
-std::vector<TableEntry> entries; //[TODO]: map <VPN,PTE>
-               
+public:    
 // Default constructor. Doesn't do anything.
 PageTable();
 
@@ -44,25 +45,81 @@ PageTable(int totalVirtualPages, int totalFrames, int pageSize);
 /// <summary>
 /// Given VPN, return mapped PFN.
 /// </summary>
-/// <param name="VPN">Virtual Page Number bit array</param>
+/// <param name="VPN">Virtual Page Number</param>
 std::pair<bool,int> TranslateVPN(int VPN);
 
 /// <summary>
 /// Parameterized constructor
 /// </summary>
 /// <returns>Max allowable framecount</returns>
-int GetMaxFrameCount();
-int GetFrameCount();
 int GetAccessOrdinal();
+
+/// <summary>
+/// Set valid-bit for an entry.
+/// </summary>
+/// <param name="VPN">Virtual Page Number of target entry.</param>
+/// <param name="state">state to set validbit to.</param>
 void SetEntryValidity(int VPN, bool state);
+
+/// <summary>
+/// Get valid-bit for an entry.
+/// </summary>
+/// <param name="VPN">Virtual Page Number of target entry.</param>
+/// <returns>true: entry is valid; false: entry invalid</returns>
 bool GetEntryValidity(int VPN);
+
+/// <summary>
+/// Set dirtybit of target entry.
+/// </summary>
+/// <param name="VPN">Virtual Page Number of target entry.</param>
+/// <param name="state">state to set dirtybit to.</param>
 void SetEntryDirty(int VPN, bool state);
+
+/// <summary>
+/// Get dirtybit of target entry.
+/// </summary>
+/// <param name="VPN">Virtual Page Number of target entry.</param>
+/// <returns>true: is dirty. false: is clean.</returns>
 bool GetEntryDirty(int VPN);
+
+/// <summary>
+/// Set PFN for target entry.
+/// </summary>
+/// <param name="VPN">Virtual Page Number of target entry.</param>
+/// <param name="PFN">new PFN</param>
 void SetEntryPFN(int VPN, int PFN);
+
+/// <summary>
+/// Get PFN of target entry.
+/// </summary>
+/// <param name="VPN">Virtual Page Number of target entry.</param>
+/// <returns>PFN of target entry.</returns>
 int GetEntryPFN(int VPN);
-int GetHitCount();
-int GetMissCount();
+
+/// <summary>
+/// Get statistics of page table.
+/// </summary>
+/// <returns>statistics.</returns>
+HardwareStats GetStatistics();
+
+/// <summary>
+/// Retrieve access ordinal of entry.
+/// </summary>
+/// <param name="VPN">Virtual Page Number of target entry.</param>
 int GetEntryAccessOrdinal(int VPN);
+
+/// <summary>
+/// Returns the entry with the given VPN.
+/// NOTE: Does not check if entry exists.
+/// </summary>
+/// <param name="VPN">Virtual Page Number</param>
+TableEntry GetEntry(int VPN);
+
+/// <summary>
+/// Gets number of entries
+/// </summary>
+/// <returns> number of entries. </returns>
+int GetTableSize();
 
 /// <summary>"Allocates frame". Increments 
 /// number of in-use frames in the page table.
@@ -78,7 +135,7 @@ PageTable::PageTable() {
 
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
     maxFrameCount = totalFrames;
-
+    this->entries.reserve(totalVirtualPages);
     // Populate map with empty entries
     for(int i = 0; i < totalVirtualPages; i++) {
         TableEntry PTE;
@@ -114,12 +171,8 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
     return res;
 }
 
-int PageTable::GetMaxFrameCount() {
-    return maxFrameCount;
-}
-
-int PageTable::GetFrameCount() {
-    return frameCount;
+int PageTable::GetTableSize() {
+    return this->entries.size();
 }
 
 int PageTable::AllocateFrame() {
@@ -163,14 +216,14 @@ int PageTable::GetEntryAccessOrdinal(int VPN) {
     return entries.at(VPN).lastUsed;
 }
 
-int PageTable::GetHitCount() {
-    return hits;
+HardwareStats PageTable::GetStatistics() {
+    HardwareStats stats(hits,misses);
+    return stats;
 }
 
-int PageTable::GetMissCount() {
-    return misses;
+TableEntry PageTable::GetEntry(int VPN) {
+    TableEntry pte = entries.at(VPN);
+    return pte;
 }
-
-
 
 #endif
