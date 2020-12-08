@@ -34,10 +34,6 @@ private:
     int bitCountVPN;        // number of bits for VPN
     int bitCountPFN;        // number of bits for PFN
 
-    int cacheTagBits; // number of tag index bits
-    int cacheIndexBits; // number of cache index bits
-    int cacheOffsetBits; // number of offset bits
-
 public:
     /// Constructor: 
     MemoryController();

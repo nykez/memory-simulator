@@ -21,6 +21,10 @@ struct MemoryOptions
     int dcPolicy    = 0;    // write policy for cache
     int dcSetSize  = 1;    // set size from config file
 
+    int cacheTagBits; // number of tag index bits
+    int cacheIndexBits; // number of cache index bits
+    int cacheOffsetBits; // number of offset bits
+
     // Other
     bool useVirt    =true;  // true: use virtual addressing
     bool useTLB     =true;  // true: use TLB (requires useVirt == true)
