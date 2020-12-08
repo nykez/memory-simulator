@@ -1,8 +1,8 @@
 #ifndef TLB_H
 #define TLB_H
+
 #include <iostream>
 #include <map>
-#include <string>
 
 #include "../TableEntry.h"
 
@@ -54,7 +54,7 @@ std::pair<bool, int> TLB::LookUp(int VPN)
 	auto pfn = -1; //initialize the found entry's PFN to -1
 	
 	//If the TLB contains the queried VPN
-	if (mappings.contains(VPN))
+	if (mappings.count(VPN) > 0)
 	{
 		//Check if the entry's valid bit is set
 		if (mappings.at(VPN).validBit == true)
@@ -108,13 +108,13 @@ int TLB::GetAccessOrdinal()
 
 bool TLB::GetEntryValidity(int VPN)
 {
-	if (mappings.contains(VPN) == true)
+	if (mappings.count(VPN) == true)
 	{
 		return mappings.at(VPN).validBit;
 	}
 	else
 	{
-		std::cerr << "Entry '"s + to_string(VPN) + "' not in table"s << std::endl;
+		std::cerr << "Entry '" << VPN << "' not in table" << std::endl;
 		return false;
 	}
 }
