@@ -15,10 +15,11 @@ struct MemoryOptions
     int pageSize    = 256;  // size of offsets
     
     // DC Options
-    int dcEntries   = 1;    // # of cache entries
-    int dcTotalSets   = 4;    // size of cache sets
+    int dcEntries   = 4;    // # of cache entries
+    int dcTotalSets   = 0;    // size of cache sets
     int dcLineSize  = 16;    // size of cache lines
     int dcPolicy    = 0;    // write policy for cache
+    int dcSetSize  = 1;    // set size from config file
 
     // Other
     bool useVirt    =true;  // true: use virtual addressing

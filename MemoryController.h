@@ -73,6 +73,8 @@ MemoryController::MemoryController(MemoryOptions config) {
     ///TODO: TLB
 
     // create data cache
+    config.dcTotalSets = config.dcEntries / config.dcSetSize;     // calculate total sets
+
     DC = Cache(config.dcTotalSets, config.dcEntries);
 
     // create page table
