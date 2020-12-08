@@ -11,13 +11,13 @@ struct MemoryOptions
 
     // PT Options
     int pageCount   = 64;    // # of virtual pages
-    int frameCount  = 4;    // # of physical frames
+    int frameCount  = 4;    // # of physical frames  
     int pageSize    = 256;  // size of offsets
     
     // DC Options
-    int dcEntries   = 2;    // # of cache entries
+    int dcEntries   = 4;    // # of cache entries
     int dcSetSize   = 1;    // size of cache sets
-    int dcLineSize  = 4;    // size of cache lines
+    int dcLineSize  = 16;    // size of cache lines
     int dcPolicy    = 0;    // write policy for cache
 
     // Other

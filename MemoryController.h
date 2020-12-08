@@ -24,7 +24,7 @@
 class MemoryController {
 private:
     //DTLB TLB;             // our TLB
-    //Cache DC;             // our data cache
+    Cache DC;             // our data cache
     PageTable PT;           // our page table
     // Configuration
     bool useVirtualMemory;  // true: use PT and TLB. False: only use DC
@@ -33,6 +33,10 @@ private:
     int bitCountOffset;     // number of bits for offset
     int bitCountVPN;        // number of bits for VPN
     int bitCountPFN;        // number of bits for PFN
+
+    int cacheTagBits; // number of tag index bits
+    int cacheIndexBits; // number of cache index bits
+    int cacheOffsetBits; // number of offset bits
 
 public:
     /// Constructor: 
@@ -59,7 +63,7 @@ public:
 
 
 MemoryController::MemoryController() {
-     PT = PageTable(64, 4, 256);
+    PT = PageTable(64, 4, 256);
     bitCountOffset = (int)log2((double)256);
     bitCountPFN = (int)log2((double)4);
     bitCountVPN = (int)log2((double)4);
@@ -67,7 +71,11 @@ MemoryController::MemoryController() {
 
 MemoryController::MemoryController(MemoryOptions config) {
     ///TODO: TLB
-    //DC = Cache(config.dcEntries, config.dcSetSize);
+
+    // create data dache
+    DC = Cache(config.dcSetSize, config.dcEntries);
+
+    // create page table
     PT = PageTable(config.pageCount, config.frameCount, config.pageSize);
 
     // Determine bit counts
