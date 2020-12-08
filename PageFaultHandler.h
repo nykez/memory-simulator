@@ -57,14 +57,14 @@ namespace PageFaultHandler {
     /// <returns>PFN of victim entry.</returns>
     int LRUReplacePage(PageTable* PT) {
         int LRU = PT->GetAccessOrdinal();
-        int victimPFN;
+        int victimPFN = -1;
         int victimVPN = 0;
         // Find Least-Recently-Used entry in PT.
         for(int i = 0; i < PT->entries.size(); i++) {
             // If invalid, skip. (It doesn't have a frame).
             if(PT->GetEntryValidity(i) == false) continue;
             // If least recent so far...
-            if(PT->entries.at(i).lastUsed < LRU) {
+            if(PT->GetEntryAccessOrdinal(i) < LRU) {
                 LRU = PT->entries.at(i).lastUsed;   // update comparer
                 victimPFN = PT->GetEntryPFN(i);     // and update PFN
                 victimVPN = i;
@@ -72,7 +72,8 @@ namespace PageFaultHandler {
         }        
         // Update victim entry
         PT->SetEntryValidity(victimVPN, false);
-
+        ///TODO: Update TLB
+        ///TODO: Update DC
         return victimPFN;
     }
 

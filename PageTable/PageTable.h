@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef PAGETABLE_H
 #define PAGETABLE_H
-#include "PageTableEntry.h"
+#include "../TableEntry.h"
 #include "../BinaryConverter.h"
 
 #include <vector>
@@ -30,7 +30,7 @@ int misses = 0;                      // number of page table misses
 
 
 public:
-std::vector<PageTableEntry> entries; //[TODO]: map <VPN,PTE>
+std::vector<TableEntry> entries; //[TODO]: map <VPN,PTE>
                
 // Default constructor. Doesn't do anything.
 PageTable();
@@ -60,6 +60,7 @@ void SetEntryPFN(int VPN, int PFN);
 int GetEntryPFN(int VPN);
 int GetHitCount();
 int GetMissCount();
+int GetEntryAccessOrdinal(int VPN);
 void AllocateFrame();
 };
 
@@ -71,15 +72,9 @@ PageTable::PageTable() {
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
     maxFrameCount = totalFrames;
 
-    // Determine number of bits
-    //int VPNBits    = (int)log2((double)totalVirtualPages);
-    int PFNBits    = (int)log2((double)totalFrames);
-    //int offsetBits = (int)log2((double)frameSize);
-
     // Populate map with empty entries
     for(int i = 0; i < totalVirtualPages; i++) {
-        //entries.push_back(PageTableEntry(PFNBits));
-        PageTableEntry PTE;
+        TableEntry PTE;
         entries.push_back(PTE);
     }
 }
@@ -90,12 +85,9 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
 
     // Result return value
     std::pair<bool, int> res (true, 0);
-    
-    // Convert to binary integer
-   // int VPNindex = BinaryConverter::ToBinaryInt(VPN);
 
     // Get entry via indexed VPN
-    PageTableEntry PTE = entries.at(VPN);
+    TableEntry PTE = entries.at(VPN);
 
     // Is it invalid?
     if(PTE.validBit == false) { // if so, page fault
@@ -154,6 +146,10 @@ void PageTable::SetEntryPFN(int VPN, int PFN) {
 
 int PageTable::GetEntryPFN(int VPN) {
     return entries.at(VPN).PFN;
+}
+
+int PageTable::GetEntryAccessOrdinal(int VPN) {
+    return entries.at(VPN).lastUsed;
 }
 
 int PageTable::GetHitCount() {
