@@ -16,14 +16,14 @@ struct MemoryOptions
     
     // DC Options
     int dcEntries   = 4;    // # of cache entries
-    int dcTotalSets   = 0;    // size of cache sets
+    int dcTotalSets = 0;    // size of cache sets
     int dcLineSize  = 16;    // size of cache lines
     int dcPolicy    = 0;    // write policy for cache
-    int dcSetSize  = 1;    // set size from config file
+    int dcSetSize   = 1;    // set size from config file
 
-    int cacheTagBits; // number of tag index bits
-    int cacheIndexBits; // number of cache index bits
-    int cacheOffsetBits; // number of offset bits
+    int cacheTagBits    =   0; // number of tag index bits
+    int cacheIndexBits  =   0; // number of cache index bits
+    int cacheOffsetBits =   0;; // number of offset bits
 
     // Other
     bool useVirt    =true;  // true: use virtual addressing

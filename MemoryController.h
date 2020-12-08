@@ -71,7 +71,14 @@ MemoryController::MemoryController(MemoryOptions config) {
     // create data cache
     config.dcTotalSets = config.dcEntries / config.dcSetSize;     // calculate total sets
 
-    DC = Cache(config.dcTotalSets, config.dcEntries);
+    // calculate index bits
+    config.cacheIndexBits = log2(config.dcTotalSets);
+    // calculate offset bits
+    config.cacheOffsetBits = log2(config.dcLineSize);
+    // calculate tag bits
+    config.cacheTagBits = config.pageSize / (config.dcTotalSets * config.dcLineSize);
+
+    DC = Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
 
     // create page table
     PT = PageTable(config.pageCount, config.frameCount, config.pageSize);
