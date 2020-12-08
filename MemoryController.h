@@ -75,15 +75,14 @@ MemoryController::MemoryController(MemoryOptions config) {
 
     // create data cache
     config.dcTotalSets = config.dcEntries / config.dcSetSize;     // calculate total sets
-
     // calculate index bits
     config.cacheIndexBits = log2(config.dcTotalSets);
     // calculate offset bits
     config.cacheOffsetBits = log2(config.dcLineSize);
     // calculate tag bits
     config.cacheTagBits = log2(config.pageSize) + log2(config.frameCount) - config.cacheIndexBits - config.cacheOffsetBits;
-
-    cout << config.cacheTagBits << endl;
+    // entries per set
+    config.cacheEntriesPerSet = config.dcEntries / config.dcTotalSets;
 
     DC = new Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
 

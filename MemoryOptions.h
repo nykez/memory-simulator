@@ -23,7 +23,8 @@ struct MemoryOptions
 
     int cacheTagBits    =   0; // number of tag index bits
     int cacheIndexBits  =   0; // number of cache index bits
-    int cacheOffsetBits =   0;; // number of offset bits
+    int cacheOffsetBits =   0; // number of offset bits
+    int cacheEntriesPerSet = 0;
 
     // Other
     bool useVirt    =true;  // true: use virtual addressing
