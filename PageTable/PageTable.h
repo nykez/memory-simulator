@@ -11,11 +11,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef PAGETABLE_H
 #define PAGETABLE_H
-#include "PageTableEntry.h"
-#include "../BinaryConverter.h"
+#include "../TableEntry.h"
 
 #include <vector>
-#include <cmath>
 #include <iostream>
 
 class PageTable {
@@ -30,7 +28,7 @@ int misses = 0;                      // number of page table misses
 
 
 public:
-std::vector<PageTableEntry> entries; //[TODO]: map <VPN,PTE>
+std::vector<TableEntry> entries; //[TODO]: map <VPN,PTE>
                
 // Default constructor. Doesn't do anything.
 PageTable();
@@ -49,6 +47,10 @@ PageTable(int totalVirtualPages, int totalFrames, int pageSize);
 /// <param name="VPN">Virtual Page Number bit array</param>
 std::pair<bool,int> TranslateVPN(int VPN);
 
+/// <summary>
+/// Parameterized constructor
+/// </summary>
+/// <returns>Max allowable framecount</returns>
 int GetMaxFrameCount();
 int GetFrameCount();
 int GetAccessOrdinal();
@@ -60,7 +62,13 @@ void SetEntryPFN(int VPN, int PFN);
 int GetEntryPFN(int VPN);
 int GetHitCount();
 int GetMissCount();
-void AllocateFrame();
+int GetEntryAccessOrdinal(int VPN);
+
+/// <summary>"Allocates frame". Increments 
+/// number of in-use frames in the page table.
+/// </summary>
+/// <returns> -1: full. Else, PFN of allocated frame. </returns>
+int AllocateFrame();
 };
 
 
@@ -71,15 +79,9 @@ PageTable::PageTable() {
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
     maxFrameCount = totalFrames;
 
-    // Determine number of bits
-    //int VPNBits    = (int)log2((double)totalVirtualPages);
-    int PFNBits    = (int)log2((double)totalFrames);
-    //int offsetBits = (int)log2((double)frameSize);
-
     // Populate map with empty entries
     for(int i = 0; i < totalVirtualPages; i++) {
-        //entries.push_back(PageTableEntry(PFNBits));
-        PageTableEntry PTE;
+        TableEntry PTE;
         entries.push_back(PTE);
     }
 }
@@ -90,12 +92,9 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
 
     // Result return value
     std::pair<bool, int> res (true, 0);
-    
-    // Convert to binary integer
-   // int VPNindex = BinaryConverter::ToBinaryInt(VPN);
 
     // Get entry via indexed VPN
-    PageTableEntry PTE = entries.at(VPN);
+    TableEntry PTE = entries.at(VPN);
 
     // Is it invalid?
     if(PTE.validBit == false) { // if so, page fault
@@ -123,9 +122,13 @@ int PageTable::GetFrameCount() {
     return frameCount;
 }
 
-void PageTable::AllocateFrame() {
-    if(frameCount < maxFrameCount)
+int PageTable::AllocateFrame() {
+    int PFN = -1;
+    if(frameCount < maxFrameCount) {
+        PFN = frameCount;
         frameCount++;
+    }
+    return PFN;
 }
 
 int PageTable::GetAccessOrdinal() {
@@ -154,6 +157,10 @@ void PageTable::SetEntryPFN(int VPN, int PFN) {
 
 int PageTable::GetEntryPFN(int VPN) {
     return entries.at(VPN).PFN;
+}
+
+int PageTable::GetEntryAccessOrdinal(int VPN) {
+    return entries.at(VPN).lastUsed;
 }
 
 int PageTable::GetHitCount() {
