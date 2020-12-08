@@ -1,2 +1,2 @@
 memory-simulator: main.cpp
-	g++ -g -o memory-simulator AddressStructs.h DataCache/Cache.h DataCache/CacheEntry.h DataCache/CacheSet.h ConfigFile.cpp HardwareStats.h MemoryController.h OutputDisplayer.h PageTable/PageTable.h PageTable/PageTableEntry.h ReferenceStats.h Trace.h BinaryConverter.h LookupBuffer/DTLB.h LookupBuffer/DTLBEntry.h MemoryOptions.h PageFaultHandler.h SimulationDeployer.h TraceStats.h main.cpp
+	g++ -g -o memory-simulator AddressStructs.h DataCache/Cache.h DataCache/CacheEntry.h DataCache/CacheSet.h ConfigFile.cpp HardwareStats.h MemoryController.h OutputDisplayer.h PageTable/PageTable.h ReferenceStats.h Trace.h BinaryConverter.h LookupBuffer/DTLB.h LookupBuffer/DTLBEntry.h MemoryOptions.h PageFaultHandler.h SimulationDeployer.h TraceStats.h main.cpp
