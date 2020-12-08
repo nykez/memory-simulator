@@ -72,7 +72,7 @@ MemoryController::MemoryController() {
 MemoryController::MemoryController(MemoryOptions config) {
     ///TODO: TLB
 
-    // create data dache
+    // create data cache
     DC = Cache(config.dcSetSize, config.dcEntries);
 
     // create page table
