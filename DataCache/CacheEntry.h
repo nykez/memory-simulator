@@ -7,6 +7,7 @@ private:
     int Tag;
     int ValidBit;
     int DirtyBit;
+    int PFN;
 
 public:
 
@@ -16,6 +17,7 @@ public:
         Tag = -1;
         ValidBit = 0;
         DirtyBit = 0;
+        PFN = -1;
     }
 
     void SetTag(int t)
@@ -46,6 +48,16 @@ public:
     int GetDirtyBit()
     {
         return DirtyBit;
+    }
+
+    void SetPFN(int physical)
+    {
+        PFN = physical;
+    }
+
+    int GetPFN()
+    {
+        return PFN;
     }
 };
 

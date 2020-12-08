@@ -30,7 +30,7 @@ public:
         Sets = new vector<CacheSet*>; // initalize vector cache set
 
         // let's create our sets
-        for (int i = 0; i < TotalSets; i++) 
+        for (int i = 0; i < TotalSets; ++i) 
         {
             Sets->push_back( new CacheSet(SetSize, i)); 
         }
@@ -40,7 +40,7 @@ public:
     // clear/free up memory
     ~Cache()
     {
-        for (int i = 0; i < TotalSets; i++)
+        for (int i = 0; i < TotalSets; ++i)
         {
             delete Sets->at(i); // delete set
         }
@@ -55,9 +55,9 @@ public:
     }
 
     // Add a entry to a set
-    void AddEntry(int index, int tag, int dirtyBit)
+    void AddEntry(int index, int tag, int dirtyBit, int pfn)
     {
-        Sets->at(index)->AddEntry(tag, dirtyBit);
+        Sets->at(index)->AddEntry(tag, dirtyBit, pfn);
     }
 
     // Update big inside a set of a entry
@@ -66,6 +66,23 @@ public:
         Sets->at(index)->UpdateDirtyEntry(tag);
     }
 
+    int Invalidate(int physicalFrameNmumber)
+    {
+        int TotalDirty = 0;
+
+        for (int i = 0; i < TotalSets; ++i)
+        {
+            TotalDirty += Sets->at(i)->Invalidate(physicalFrameNmumber);
+        }
+        
+
+        return TotalDirty;
+    }
+
+    bool LRU_IsEntryDirtyBit(int index)
+    {
+        return Sets->at(index)->LRU_IsEntryDirtyBit();
+    }
 
 private:
     vector<CacheSet*> *Sets; // vector of our CacheSets objects (class)
