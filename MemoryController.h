@@ -24,15 +24,15 @@
 class MemoryController {
 private:
     //DTLB TLB;             // our TLB
-    //Cache DC;        // our data cache
+    //Cache DC;             // our data cache
     PageTable PT;           // our page table
     // Configuration
-    bool useVirtualMemory; // true: use PT and TLB. False: only use DC
+    bool useVirtualMemory;  // true: use PT and TLB. False: only use DC
     bool useTLB;            // true: use PT,TLB,DC. False: use PT, DC
 
-    int bitCountOffset;
-    int bitCountVPN;
-    int bitCountPFN;
+    int bitCountOffset;     // number of bits for offset
+    int bitCountVPN;        // number of bits for VPN
+    int bitCountPFN;        // number of bits for PFN
 
 public:
     /// Constructor: 
@@ -109,8 +109,8 @@ void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
 void MemoryController::AttachVPNandOffset(TraceStats* traceW) {
     VirtualAddress virtAddr(traceW->trace.hexAddress, bitCountOffset);
     //NOTE: We can make trace hold a bit-array if necessary. We have to change this tho (it isn't hard to change).
-    traceW->VPN         = BinaryConverter::ToBinaryInt(virtAddr.VPN);
-    traceW->pageOffset  = BinaryConverter::ToBinaryInt(virtAddr.offset);
+    traceW->VPN         = (((1 << bitCountVPN) - 1) & (traceW->trace.hexAddress >> bitCountOffset));
+    traceW->pageOffset  = (((1 << bitCountOffset) - 1) & (traceW->trace.hexAddress));
 }
 
 /// PURPOSE: Check DTLB for PFN of given VPN

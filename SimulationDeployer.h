@@ -52,7 +52,7 @@ void SimulationDeployer::GatherInput() {
     traces.emplace_back(Trace(0,0x148));
     traces.emplace_back(Trace(0,0x144));
     traces.emplace_back(Trace(0,0xC80));
-    //traces.emplace_back(Trace(0,0x008)); BREAKS FOR THIS
+    traces.emplace_back(Trace(0,0x008));
 }
 
 void SimulationDeployer::RunProgram() {
