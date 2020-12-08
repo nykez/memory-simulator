@@ -121,9 +121,9 @@ void OutputDisplayer::DisplayConfig() {
     printf("Each set contains %d entries.\n", configOutput.dcEntries);
     printf("Each line is %d bytes.\n", configOutput.dcLineSize);
     printf("The set uses a [PLACEHOLDER] policy\n");
-    printf("Number of bits used for the tag is [PLACEHOLDER].\n");
-    printf("Number of bits used for the index  is [PLACEHOLDER].\n");
-    printf("Number of bits used for the offset is [PLACEHOLDER].\n");
+    printf("Number of bits used for the tag is %d.\n", configOutput.cacheTagBits);
+    printf("Number of bits used for the index  is %d.\n", configOutput.cacheIndexBits);
+    printf("Number of bits used for the offset is %d.\n", configOutput.cacheOffsetBits);
     printf("\n");
     if(configOutput.useVirt) {
         printf("The addresses read in are VIRTUAL addresses.\n");
