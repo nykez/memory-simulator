@@ -115,6 +115,12 @@ int GetEntryAccessOrdinal(int VPN);
 /// <param name="VPN">Virtual Page Number</param>
 TableEntry GetEntry(int VPN);
 
+/// <summary>
+/// Gets number of entries
+/// </summary>
+/// <returns> number of entries. </returns>
+int GetTableSize();
+
 /// <summary>"Allocates frame". Increments 
 /// number of in-use frames in the page table.
 /// </summary>
@@ -129,7 +135,7 @@ PageTable::PageTable() {
 
 PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
     maxFrameCount = totalFrames;
-
+    this->entries.reserve(totalVirtualPages);
     // Populate map with empty entries
     for(int i = 0; i < totalVirtualPages; i++) {
         TableEntry PTE;
@@ -163,6 +169,10 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
     accessOrdinal++;
 
     return res;
+}
+
+int PageTable::GetTableSize() {
+    return this->entries.size();
 }
 
 int PageTable::AllocateFrame() {

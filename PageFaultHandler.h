@@ -31,7 +31,7 @@ namespace PageFaultHandler {
             PFN = LRUReplacePage(PT);       // If not, swap out a frame.
             diskReferences++;               // We touched disk.
         }
-        PT->entries.at(VPNindex).PFN = PFN; // Update entry's PFN.
+        PT->SetEntryPFN(VPNindex, PFN);     // Update entry's PFN.
         PT->SetEntryValidity(VPNindex,true);// Set as now valid.
         return PFN;                         // Return PFN.
     }
@@ -55,7 +55,7 @@ namespace PageFaultHandler {
         int victimPFN = -1;
         int victimVPN = 0;
         // Find Least-Recently-Used entry in PT.
-        for(int i = 0; i < PT->entries.size(); i++) {
+        for(int i = 0; i < PT->GetTableSize(); i++) {
             // If invalid, skip. (It doesn't have a frame).
             if(PT->GetEntryValidity(i) == false) continue;
             // If least recent so far...
