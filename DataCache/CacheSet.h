@@ -2,6 +2,7 @@
 #define CACHESET_H
 
 #include <deque>
+#include <vector>
 #include "CacheEntry.h"
 
 using namespace std;
@@ -10,13 +11,13 @@ class CacheSet
 {
 public:
 
-    CacheSet() {}
-
     // constructor
     CacheSet(int nentries, int setnumber)
     {
         TotalEntries = nentries; // total entries
         SetNumber = setnumber; // current set number
+
+        Entries = new deque<CacheEntry*>;
 
         // create new entries
         for (int i = 0; i < nentries; i++)
@@ -87,7 +88,7 @@ public:
     }
 
     // TODO:
-    int Invalidate()
+    int Invalidate(int physicalPageNumber)
     {
         return 0;
     }
@@ -102,7 +103,7 @@ public:
 private:
     int TotalEntries;
     int SetNumber;
-    std::deque<CacheEntry*> *Entries;
+    deque<CacheEntry*> *Entries;
 };
 
 #endif

@@ -13,7 +13,7 @@ public:
     // ctor
     CacheEntry()
     {
-        Tag = __INT32_MAX__;
+        Tag = -1;
         ValidBit = 0;
         DirtyBit = 0;
     }

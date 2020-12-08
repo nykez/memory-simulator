@@ -8,8 +8,6 @@ class Cache
 {
 public:
 
-    Cache() {}
-
     // Create a new cache
     // We only have 1 in our program but this can easily be expanded out to use data cache and a instruction cache
     // so why not?
@@ -43,8 +41,6 @@ public:
     bool GetEntry(int index, int tag)
     {
         return Sets->at(index)->GetEntry(tag);
-
-        return false;
     }
 
     // Add a entry to a set

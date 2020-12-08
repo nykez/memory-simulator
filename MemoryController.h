@@ -24,7 +24,7 @@
 class MemoryController {
 private:
     //DTLB TLB;             // our TLB
-    //Cache DC;             // our data cache
+    Cache *DC;             // our data cache
     PageTable PT;           // our page table
     // Configuration
     bool useVirtualMemory;  // true: use PT and TLB. False: only use DC
@@ -78,7 +78,7 @@ MemoryController::MemoryController(MemoryOptions config) {
     // calculate tag bits
     config.cacheTagBits = config.pageSize / (config.dcTotalSets * config.dcLineSize);
 
-    //DC = Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
+    DC = new Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
 
     // Determine bit counts
     bitCountOffset = (int)log2((double)config.pageSize);
