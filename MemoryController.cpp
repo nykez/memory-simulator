@@ -126,6 +126,7 @@ TraceStats MemoryController::RunMemory(Trace trace) {
 
             if (trace.accessType == AccessType::Write)
             {
+                // touched memory, update counter
                 refCountMainMemory++;
             }
         }
@@ -152,6 +153,7 @@ TraceStats MemoryController::RunMemory(Trace trace) {
         {
             if (trace.accessType == AccessType::Write)
             {
+                // hit memory + update counter
                 ++refCountMainMemory;
             }
             else

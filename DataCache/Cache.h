@@ -69,6 +69,7 @@ public:
         Sets->at(index)->UpdateDirtyEntry(tag);
     }
 
+    // Invalidates the entire cache at set->set cache entry
     int Invalidate(int physicalFrameNmumber)
     {
         int TotalDirty = 0;
@@ -97,6 +98,7 @@ public:
     }
 
 
+    // Checks if the cache at index first entry is has a dirty bit
     bool LRU_IsEntryDirtyBit(int index)
     {
         return Sets->at(index)->LRU_IsEntryDirtyBit();
