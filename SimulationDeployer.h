@@ -85,6 +85,7 @@ void SimulationDeployer::RunProgram() {
     std::vector<TraceStats> traceStats;
     //For each address in inputReader.inputLines
     // pass into MC, storing results in array
+    outputDisplayer.DisplayTraceHeader();
     for(int i = 0; i < traces.size(); i++) {
         outputDisplayer.DisplayTraceLine(MC.RunMemory(traces[i]));
     }

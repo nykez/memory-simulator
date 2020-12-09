@@ -155,8 +155,6 @@ std::pair<bool, int> PageTable::LookUp(int VPN)
 
     // Is it invalid?
     if(PTE.validBit == false) { // if so, page fault
-        printf("INPUT: %d | PTE: PFN = %d, V = %d, D = %d, L = %d\n", VPN, PTE.PFN, PTE.validBit, PTE.dirtyBit, PTE.lastUsed);
-        std::cout << "Page fault for entry VPN == " << VPN << std::endl;
         res.first = false;
         misses++;
     } else {
