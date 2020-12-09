@@ -15,6 +15,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <cstring>
 
 
 /// <summary>
@@ -173,8 +174,8 @@ inline bool InputReader::SetTraceFile(const std::string& filename)
 /// and a pair containing trace properties.</returns>
 inline std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
 {
-	string trace_access; //holds the current trace read/write access type
-	string trace_hex_address; //holds the current trace hex-address
+	std::string trace_access; //holds the current trace read/write access type
+	std::string trace_hex_address; //holds the current trace hex-address
 
 	//Check if the end of the trace file was reached
 	if ((trace_read = getline(&trace_line, &trace_len, trace_file)) != -1)
