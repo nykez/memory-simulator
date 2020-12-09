@@ -86,7 +86,7 @@ std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string
 	}
 
 	
-	std::map<std::string, std::string> configOptions{}; //map to hold the config options
+	std::map<std::string, std::string> configOptions; //map to hold the config options
 	
 	//If the file was found, read it line by line
 	auto line_counter = 0; //counter for lines read
@@ -110,7 +110,7 @@ std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string
 			//Check if the value is an integer or "Y/y" or "N/n"
 			if (is_integer(fields[1]) == true || is_yn(fields[1]) == true)
 			{
-				configOptions.insert(fields[0], fields[1]);
+				configOptions.insert({fields[0], fields[1]});
 			}
 			else
 			{
