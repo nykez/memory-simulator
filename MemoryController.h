@@ -12,7 +12,7 @@
 #define MEM_CON_H
 #include "DataCache/Cache.h"
 #include "PageTable/PageTable.h"
-#include "LookupBuffer/DTLB.h"
+#include "LookupBuffer/DTLB.cpp"
 #include "ReferenceStats.h"
 #include "PageFaultHandler.cpp"
 #include "Trace.h"
