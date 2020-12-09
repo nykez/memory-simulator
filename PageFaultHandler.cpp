@@ -51,7 +51,7 @@ int PageFaultHandler::HandleFault(PageTable* PT, TLB* DTLB, Cache* DC, int VPNin
         int dirtyCount = DC->Invalidate(victimPFN);
         if (DC->GetPolicy() == 1) // write-back policy; update mem references
         {
-            // TODO: Update memory references if write-back policy
+            memoryReferences++;
         }
 
         return victimPFN;

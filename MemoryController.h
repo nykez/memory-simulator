@@ -33,9 +33,9 @@ int CreateBitMasking(int startBit, int endBit)
 
 class MemoryController {
 private:
-    TLB     DTLB;           // our TLB
+    TLB    *DTLB;           // our TLB
     Cache    *DC;           // our data cache
-    PageTable PT;           // our page table
+    PageTable*PT;           // our page table
 
     // Statistics
     int refCountMainMemory = 0; // number of references to main memory
@@ -115,7 +115,7 @@ public:
 
 
 MemoryController::MemoryController() {
-    PT = PageTable(64, 4, 256);
+    //PT = PageTable(64, 4, 256);
     bitCountOffset = (int)log2((double)256);
     bitCountPFN = (int)log2((double)4);
     bitCountVPN = (int)log2((double)4);
@@ -123,20 +123,18 @@ MemoryController::MemoryController() {
 
 MemoryController::MemoryController(MemoryOptions config) {
     // Configure TLB
-    DTLB.SetMaxSize(config.tlbEntries);
+    DTLB = new TLB(config.tlbEntries);
     
     // Configure data cache
-    // create data cache
     config.dcTotalSets = config.dcEntries / config.dcSetSize;     // calculate total sets
-    // calculate index bits
-    config.cacheIndexBits = log2(config.dcTotalSets);
-    // calculate offset bits
-    config.cacheOffsetBits = log2(config.dcLineSize);
-    // calculate tag bits
-    config.cacheTagBits = log2(config.pageSize) + log2(config.frameCount) - config.cacheIndexBits - config.cacheOffsetBits;
-    // entries per set
-    config.cacheEntriesPerSet = config.dcEntries / config.dcTotalSets;
-
+    config.cacheIndexBits = log2(config.dcTotalSets);             // calculate index bits
+    config.cacheOffsetBits = log2(config.dcLineSize);             // calculate offset bits
+    config.cacheTagBits = log2(config.pageSize) +                 // calculate tag bits
+                          log2(config.frameCount) - 
+                          config.cacheIndexBits - 
+                          config.cacheOffsetBits;
+    config.cacheEntriesPerSet = config.dcEntries / config.dcTotalSets;  // entries per set
+    // create data cache
     DC = new Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
     DC->SetPolicy(config.dcPolicy);
 
@@ -146,7 +144,7 @@ MemoryController::MemoryController(MemoryOptions config) {
     bitCountVPN = (int)log2((double)config.pageCount);
 
     // create page table
-    PT = PageTable(config.pageCount, config.frameCount, config.pageSize);
+    PT = new PageTable(config.pageCount, config.frameCount, config.pageSize);
 
     // Configure controller
     useVirtualMemory = config.useVirt;
@@ -163,6 +161,8 @@ MemoryController::~MemoryController() {
 MemoryOptions MemoryController::GetConfigOptions() {
     return MemConfig;
 }
+
+
 
 /// PURPOSE: Runs memory simulation
 TraceStats MemoryController::RunMemory(Trace trace) {
@@ -198,7 +198,6 @@ TraceStats MemoryController::RunMemory(Trace trace) {
 
             if (trace.accessType == AccessType::Write)
             {
-                // TODO: update memory reference count
                 refCountMainMemory++;
             }
         }
@@ -295,15 +294,15 @@ void MemoryController::AttachVPNandOffset(TraceStats* traceW) {
 /// RETURNS: PFN
 int MemoryController::CheckDataTLB(TraceStats* traceW) {
     std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
-    res = DTLB.LookUp(traceW->VPN);         // check TLB
+    res = DTLB->LookUp(traceW->VPN);         // check TLB
     if(res.first == false) {                // if TLB MISS
         traceW->TLBresult = "MISS";         // | log MISS
         res.second = CheckPageTable(traceW);// | return PFN from page table
-        int dirtyBit = PT.GetEntryDirty(traceW->VPN);
-        int validBit = PT.GetEntryValidity(traceW->VPN);
-        int accessOrd= PT.GetEntryAccessOrdinal(traceW->VPN);
+        int dirtyBit = PT->GetEntryDirty(traceW->VPN);
+        int validBit = PT->GetEntryValidity(traceW->VPN);
+        int accessOrd= PT->GetEntryAccessOrdinal(traceW->VPN);
         TableEntry te(res.second, dirtyBit, validBit, accessOrd);
-        DTLB.InsertEntry(traceW->VPN, te);  // | update TLB
+        DTLB->InsertEntry(traceW->VPN, te);  // | update TLB
     } else {                                // if TLB HIT
         traceW->TLBresult = "HIT";          // | log HIT
     }
@@ -315,7 +314,7 @@ int MemoryController::CheckDataTLB(TraceStats* traceW) {
 int MemoryController::CheckPageTable(TraceStats* traceW) {
     refCountPageTable++;                    // we touch page table... 
     std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
-    res = PT.LookUp(traceW->VPN);           // check page table
+    res = PT->LookUp(traceW->VPN);           // check page table
     if(res.first == false) {                // if PT MISS
         refCountDisk++;                     // | go to disk
         traceW->PTresult = "MISS";          // | log MISS
@@ -329,10 +328,7 @@ int MemoryController::CheckPageTable(TraceStats* traceW) {
 /// PURPOSE: Handle a page fault
 /// RETURNS: PFN
 int MemoryController::HandlePageFault(int VPN) {
-    if(useTLB == false) {
-        return PageFaultHandler::HandleFault(&PT, nullptr, DC, VPN);
-    }
-    return PageFaultHandler::HandleFault(&PT, &DTLB, DC, VPN);
+    return PageFaultHandler::HandleFault(PT, DTLB, DC, VPN);
 }
 
 // add to the main memory touches
@@ -344,11 +340,11 @@ void MemoryController::AddReferenceCountToMemory(int amountToAdd)
 /// PURPOSE: Get stats of page table
 /// RETURNS: HardwareStats of page table
 HardwareStats MemoryController::GetPTStats() {
-    return PT.GetStatistics();
+    return PT->GetStatistics();
 }
 
 HardwareStats MemoryController::GetDTLBStats() {
-    return DTLB.GetStatistics();
+    return DTLB->GetStatistics();
 }
 
 HardwareStats MemoryController::GetDCStats()
@@ -367,7 +363,7 @@ int MemoryController::ExtractBits(int number, int k, int p)
 }
 
 ReferenceStats MemoryController::GetReferenceCounts() {
-    ReferenceStats refStats(refCountPageTable, refCountMainMemory, refCountDisk);
+    ReferenceStats refStats(refCountPageTable, refCountMainMemory + PageFaultHandler::memoryReferences, refCountDisk);
     return refStats;
 }
 
