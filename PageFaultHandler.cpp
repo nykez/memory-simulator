@@ -1,9 +1,27 @@
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Project:		GroupProject
+//	File Name:		PageFaultHandler.cpp
+//	Description:    Implemenation of PageFaultHandler.h
+//	Course:			CSCI-4727-940: Operating Systems
+//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
+//	Created:		Saturday, December 5 2020
+//	Copyright:	    Harrison Pollitte 2020
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "PageFaultHandler.h"
 
 
-int PageFaultHandler::HandleFault(PageTable* PT, TLB* DTLB, Cache* DC, int VPNindex) {
+    /// <summary>
+    /// Handle a page fault. Get a PFN for our page.
+    /// </summary>
+    /// <param name="PT">pointer to page table</param>
+    /// <param name="DTLB">pointer to related data TLB</param>
+    /// <param name="DC">pointer to related data cache</param>
+    /// <param name="VPNindex">VPN of faulted page.</param>
+    /// <returns>PFN for new page.</returns>
+    int PageFaultHandler::HandleFault(PageTable* PT, TLB* DTLB, Cache* DC, int VPNindex) {
         int PFN = PageFaultHandler::FindFreeFrame(PT);            // Find free frame to use.
         if(PFN == -1) {                                           // Is there a free frame?
             PFN = PageFaultHandler::LRUReplacePage(PT, DTLB, DC); // If not, swap out a frame.

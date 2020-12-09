@@ -1,15 +1,35 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Project:		GroupProject
+//	File Name:		OutputDisplayer.cpp
+//	Description:    Implementation of OutputDisplayer.h
+//	Course:			CSCI-4727-940: Operating Systems
+//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
+//	Created:		Saturday, December 5 2020
+//	Copyright:	    Harrison Pollitte 2020
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "OutputDisplayer.h"
 
+/// <summary>
+/// Default constructor.
+/// </summary>
 OutputDisplayer::OutputDisplayer(/* args */) {
     
 }
 
+/// <summary>
+/// Deconstructor.
+/// </summary>
 OutputDisplayer::~OutputDisplayer() {
 
 }
 
 #pragma region input-methods
-
+/// <summary>
+/// Give configuration to display later.
+/// </summary>
+/// <param name="mem">memory congfig to display</param>
 void OutputDisplayer::FeedConfigOutput(MemoryOptions mem) {
     this->configOutput = mem;
     if(configOutput.dcPolicy == 0) {
@@ -20,22 +40,43 @@ void OutputDisplayer::FeedConfigOutput(MemoryOptions mem) {
     }
 }
 
+/// <summary>
+/// Give TLB stats to display later.
+/// </summary>
+/// <param name="stats">TLB stats to display</param>
 void OutputDisplayer::FeedTLBStats(HardwareStats stats) {
     this->TLBOutput = stats;
 }
 
+/// <summary>
+/// Give pT stats to display later.
+/// </summary>
+/// <param name="stats">PT stats to display</param>
 void OutputDisplayer::FeedPTStats(HardwareStats stats) {
     this->PTOutput = stats;
 }
 
+/// <summary>
+/// Give DC stats to display later.
+/// </summary>
+/// <param name="stats">DC stats to display</param>
 void OutputDisplayer::FeedDCStats(HardwareStats stats) {
     this->DCOutput = stats;
 }
 
-void OutputDisplayer::FeedMiscOutput(ReferenceStats stats) {
+/// <summary>
+/// Give reference stats to display later.
+/// </summary>
+/// <param name="stats">stats to display.</param>
+void OutputDisplayer::FeedReferenceOutput(ReferenceStats stats) {
     this->miscOutput = stats;
 }
 
+/// <summary>
+/// Give read/write info to display later.
+/// </summary>
+/// <param name="numReads">number of reads.</param>
+/// <param name="numWrites">number of writes.</param>
 void OutputDisplayer::FeedReadWriteInfo(int numReads, int numWrites) {
     reads = numReads;
     writes = numWrites;
@@ -46,6 +87,9 @@ void OutputDisplayer::FeedReadWriteInfo(int numReads, int numWrites) {
 
 #pragma region Display-methods
 
+/// <summary>
+/// Display configuration file
+/// </summary>
 void OutputDisplayer::DisplayConfig() {
     printf("Data TLB contains %d entries.\n", configOutput.tlbEntries);
     printf("\n");
@@ -76,12 +120,19 @@ void OutputDisplayer::DisplayConfig() {
     printf("\n");
 }
 
+/// <summary>
+/// Display trace header.
+/// </summary>
 void OutputDisplayer::DisplayTraceHeader() {
     printf("Virtual  Virt.  Page TLB  PT   Phys        DC  DC  \n");
     printf("Address  Page # Off. Res. Res. Pg # DC Tag Idx Res.\n");
     printf("-------- ------ ---- ---- ---- ---- ------ --- ----\n");
 }
 
+/// <summary>
+/// Display trace.
+/// </summary>
+/// <param name="line">trace to display</param>
 void OutputDisplayer::DisplayTraceLine(TraceStats line) {
     printf("%08x %6x %4x %4s %4s %4x %6x %3x %4s\n", 
                  line.trace.hexAddress,
@@ -95,6 +146,9 @@ void OutputDisplayer::DisplayTraceLine(TraceStats line) {
                  line.DCresult.c_str());
 }
 
+/// <summary>
+/// Display component stats.
+/// </summary>
 void OutputDisplayer::DisplayComponentStats() {
     printf("\n\nSimulation Statistics\n");
     printf("---------------------\n");
@@ -114,13 +168,19 @@ void OutputDisplayer::DisplayComponentStats() {
 
 }
 
+/// <summary>
+/// Display read/write info
+/// </summary>
 void OutputDisplayer::DisplayReadWriteInfo() {
     printf("Total reads          : %d\n", reads);
     printf("Total writes         : %d\n", writes);
     printf("Ratio of reads       : %f\n", rwRatio);
 }
 
-void OutputDisplayer::DisplayMiscStats() {
+/// <summary>
+/// Display reference info
+/// </summary>
+void OutputDisplayer::DisplayReferenceStats() {
     printf("Main Memory references: %d\n",miscOutput.mainMemoryRefCount);
     printf("Page Table  references: %d\n",miscOutput.pageTableRefCount);
     printf("Disk References       : %d\n",miscOutput.diskRefCount);

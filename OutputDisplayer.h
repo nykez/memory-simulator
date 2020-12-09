@@ -1,10 +1,14 @@
-/// NAME: OutputDisplayer.h
-/// PURPOSE: Display output to console
-/// AUTHOR: Harrison Lee Pollitte
-/// CREATED: 12/6/2020
-/// NOTES:
-///
-///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Project:		GroupProject
+//	File Name:		OutputDisplayer.h
+//	Description:    Display output to console
+//	Course:			CSCI-4727-940: Operating Systems
+//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
+//	Created:		Saturday, December 5 2020
+//	Copyright:	    Harrison Pollitte 2020
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef OUTPUT_DISP_H
 #define OUTPUT_DISP_H
@@ -14,6 +18,9 @@
 #include "MemoryOptions.h"
 #include "HardwareStats.h"
 #include "ReferenceStats.h"
+///<summary>
+/// display stuff
+///</summary>
 class OutputDisplayer {
 private:
     MemoryOptions configOutput;    // information about configuration
@@ -30,43 +37,17 @@ public:
     OutputDisplayer(/* args */);
     ~OutputDisplayer();
     
-    /// PURPOSE: Set configOutput
     void FeedConfigOutput(MemoryOptions mem);
-
-    /// PURPOSE: Set TLBOutput
     void FeedTLBStats(HardwareStats stats);
-
-    /// PURPOSE: Set PTOutput
     void FeedPTStats(HardwareStats stats);
-
-    /// PURPOSE: Set DCOutput
     void FeedDCStats(HardwareStats stats);
-
-    /// PURPOSE: Set miscOutput
-    void FeedMiscOutput(ReferenceStats stats);
-
-    /// PURPOSE: Display config info
+    void FeedReferenceOutput(ReferenceStats stats);
     void DisplayConfig();
-
-    /// PURPOSE: Display trace header
     void DisplayTraceHeader();
-
-    /// PURPOSE: Display trace
     void DisplayTraceLine(TraceStats line);
-
-    /// PURPOSE: Display hit/miss/rate of components
     void DisplayComponentStats();
-
-    /// PURPOSE: Display various stats
-    void DisplayMiscStats();
-
-    /// PURPOSE: Set R/W info
+    void DisplayReferenceStats();
     void FeedReadWriteInfo(int numReads, int numWrites);
-
-    /// PURPOSE: Display read/write info
     void DisplayReadWriteInfo();
 };
-
-
-
 #endif //OUTPUT_DISP_H
