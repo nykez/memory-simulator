@@ -12,12 +12,9 @@
 #include "SimulationDeployer.h"
 
 /// <summary>
-/// Parameterized construtor
+/// Deault construtor
 /// </summary>
-/// <param name="configFilePath">path to config file</param>
-/// <param name="traceFilePath">path to trace file</param>
-SimulationDeployer::SimulationDeployer(const string& configFilePath, const string& traceFilePath) {
-    
+SimulationDeployer::SimulationDeployer() {
 }
 
 
@@ -33,11 +30,11 @@ SimulationDeployer::~SimulationDeployer() {
 /// Read in config file, parse it, setup our MemoryOption
 /// setup our Memory Controller, display config and trace header
 /// </summary>
-void SimulationDeployer::Initialize() {
+void SimulationDeployer::Initialize(const string& configFile, const string& traceFile) {
     // Read config
-    ///DAVID:
+    ///DAVID: READ IN MAP HERE inputReader.ReadConfigFile(configFile);
     // Setup config
-    
+    ///DAVID: Search through map, assinging things to our MO
     // Setup Memory Controller
     MC = (MO);
     // Display config
@@ -45,7 +42,7 @@ void SimulationDeployer::Initialize() {
     outputDisplayer.DisplayConfig();
     // Setup trace file
     outputDisplayer.DisplayTraceHeader();
-    ///DAVID:
+    inputReader.SetTraceFile(traceFile);
 }
 
 ///<summary>
@@ -69,20 +66,22 @@ void SimulationDeployer::GatherInput() {
 /// Feed output to the OutputDisplayer.
 /// </summary>
 void SimulationDeployer::RunProgram() {
+    ///DAVID: uncomment this next section. It should work. If it doesn't fix it.
+    /// This next section should 
     //For each address in inputReader.inputLines
     // pass into MC, storing results in array
-    /*
+    //*
     while(true) {
-        std::pair<bool, std::pair<std::string, std::string>> fileInput = inputReader.ReadTraceFile();
+        std::pair<bool, std::pair<std::string, std::string>> fileInput = inputReader.ReadTrace();
         if(fileInput.first == true) break;                              // if no more to read, finished.
         int accessType = std::stoi(fileInput.second.first,nullptr,10);  // get access type
         int hexaddr = std::stoi(fileInput.second.second, nullptr, 16);  // get hex address
-        Trace trace(accessType,hexaddr);
-        TraceStats traceStats = MC.RunMemory(trace);
-        outputDisplayer.DisplayTraceLine(traceStats);
+        Trace trace(accessType,hexaddr);                                // create trace
+        TraceStats traceStats = MC.RunMemory(trace);                    // run
+        outputDisplayer.DisplayTraceLine(traceStats);                   // display
     }
     /**/
-    //* 
+    /* OLD
     for(int i = 0; i < traces.size(); i++) {
         outputDisplayer.DisplayTraceLine(MC.RunMemory(traces[i]));
     }

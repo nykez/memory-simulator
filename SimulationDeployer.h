@@ -33,9 +33,9 @@ private:
     vector<Trace> traces;
     MemoryOptions MO;
 public:
-    SimulationDeployer(const string& configFilePath, const string& traceFilePath);
+    SimulationDeployer());
     ~SimulationDeployer();
-    void Initialize();
+    void Initialize(const string& configFile, const string& traceFile);
     void GatherInput();
     void RunProgram();
 };
