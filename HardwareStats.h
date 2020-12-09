@@ -1,11 +1,14 @@
-/// NAME: HardwareStats.h
-/// PURPOSE: Hold statistical information on memory components.
-/// AUTHOR: Harrison Lee Pollitte
-/// CREATED: 12/6/2020
-/// NOTES: Used by OutputDisplayer.h for displaying stats to console.
-/// *      Used by MemoryController.h to track information on components.
-/// *
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Project:		GroupProject
+//	File Name:		HardwareStats.h
+//	Description:    Hold statistical information on memory components.
+//	Course:			CSCI-4727-940: Operating Systems
+//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
+//	Created:		Wednesday, December 6 2020
+//	Copyright:	    Harrison Pollitte 2020
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef HARDWARE_STATS_H
 #define HARDWARE_STATS_H
 
@@ -17,7 +20,10 @@ struct HardwareStats {
     int hits = 0;           // number of successes
     int misses = 0;         // number of fails
     double hitrate = 0.0;   // hits / (hits + misses)
-
+    
+    ///<summary>
+    /// Default Constructor
+    ///</summary>
     HardwareStats() {
         
     }
