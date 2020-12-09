@@ -49,12 +49,12 @@ void SimulationDeployer::Initialize(const string& configFile, const string& trac
 	    //TODO: use write through/no write memory option
     }
 	string isVirtConf = options.at("Virtual addresses");
-	if (isWriteConf == "N" || isWriteConf == "n")
+	if (isVirtConf == "n" || isVirtConf == "n")
     {
 	    MO.useVirt = false;
     }
 	string isTLBConf = options.at("TLB");
-	if (isWriteConf == "N" || isWriteConf == "n")
+	if (isTLBConf == "N" || isTLBConf == "n")
     {
 	    MO.useTLB = false;
     }
@@ -97,7 +97,8 @@ void SimulationDeployer::RunProgram() {
     while(true) {
         std::pair<bool, std::pair<std::string, std::string>> fileInput = inputReader.ReadTrace();
         if(fileInput.first == true) break;                              // if no more to read, finished.
-        int accessType = std::stoi(fileInput.second.first,nullptr,10);  // get access type
+        int accessType = 0;
+        if(fileInput.second.first == "W") accessType = 1;
         int hexaddr = std::stoi(fileInput.second.second, nullptr, 16);  // get hex address
         Trace trace(accessType,hexaddr);                                // create trace
         TraceStats traceStats = MC.RunMemory(trace);                    // run
@@ -118,10 +119,10 @@ void SimulationDeployer::RunProgram() {
     outputDisplayer.FeedPTStats(PTstats);
     outputDisplayer.FeedTLBStats(TLBstats);
     outputDisplayer.FeedDCStats(DCstats);
+    outputDisplayer.DisplayComponentStats();
 
     ReferenceStats refStats = MC.GetReferenceCounts();
     outputDisplayer.FeedReferenceOutput(refStats);
+    outputDisplayer.DisplayReferenceStats();
 
-    MemoryOptions Options = MC.GetConfigOptions();
-    outputDisplayer.FeedConfigOutput(Options);
 }
