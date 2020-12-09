@@ -242,10 +242,6 @@ int MemoryController::ExtractBits(int number, int k, int p)
     return (((1 << k) - 1) & (number >> (p - 1))); 
 }
 
-int MemoryController::CalculatePhysicalAddress(int PFN, int offset) {
-    return (PFN << bitCountOffset) | offset;
-}
-
 ReferenceStats MemoryController::GetReferenceCounts() {
     ReferenceStats refStats(refCountPageTable, refCountMainMemory, refCountDisk);
     return refStats;

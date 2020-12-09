@@ -73,7 +73,8 @@ void SimulationDeployer::RunProgram() {
     outputDisplayer.FeedPTStats(PTstats);
     outputDisplayer.FeedTLBStats(TLBstats);
 
-    outputDisplayer.FeedMiscOutput();
+    ReferenceStats refStats = MC.GetReferenceCounts();
+    outputDisplayer.FeedMiscOutput(refStats);
     MemoryOptions Options = MC.GetConfigOptions();
 
     outputDisplayer.FeedConfigOutput(Options);
