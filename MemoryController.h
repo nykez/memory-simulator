@@ -220,12 +220,12 @@ TraceStats MemoryController::RunMemory(Trace trace) {
         {
             if (trace.accessType == AccessType::Write)
             {
-                refCountMainMemory++;
+                ++refCountMainMemory;
             }
             else
             {
                 // bring in from "memory", update cache
-                refCountMainMemory++;
+                ++refCountMainMemory;
                 // index, tag, dirtybit, PFN
                 DC->AddEntry(index, otherTag, 0, traceW.PFN);
             }
@@ -239,21 +239,20 @@ TraceStats MemoryController::RunMemory(Trace trace) {
                 bool IsDirtyBit = DC->LRU_IsEntryDirtyBit(index);
                 // UPDATE cache with new entry (it's  dirty because this is a write)
                 DC->AddEntry(index, otherTag, 1, traceW.PFN);
-                refCountMainMemory++; // "touch/bringin from memory"
+                ++refCountMainMemory; // "touch/bringin from memory"
 
                 // if replaced cache was dirty then we updated memory
                 if (IsDirtyBit)
                 {
                     // so update memory counter
-                    refCountMainMemory++;
+                    ++refCountMainMemory;
                 }
-
 
             }
             else
             {
                 // bring in from "memory", update cache
-                refCountMainMemory++;
+                ++refCountMainMemory;
                 // index, tag, dirtybit, PFN
                 DC->AddEntry(index, otherTag, 0, traceW.PFN); // update the cache
             }
@@ -310,7 +309,6 @@ int MemoryController::CheckDataTLB(TraceStats* traceW) {
 /// RETURNS: PFN
 int MemoryController::CheckPageTable(TraceStats* traceW) {
     refCountPageTable++;                    // we touch page table... 
-    refCountMainMemory++;                   // ... which is in main memory.
     std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
     res = PT.LookUp(traceW->VPN);           // check page table
     if(res.first == false) {                // if PT MISS
@@ -347,6 +345,13 @@ HardwareStats MemoryController::GetPTStats() {
 HardwareStats MemoryController::GetDTLBStats() {
     return DTLB.GetStatistics();
 }
+
+HardwareStats MemoryController::GetDCStats()
+{
+    return DTLB.GetStatistics();
+}
+
+
 int MemoryController::CalculatePhysicalAddress(int PFN, int offset) {
     return (PFN << bitCountOffset) | offset;
 }

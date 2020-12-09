@@ -70,8 +70,11 @@ void SimulationDeployer::RunProgram() {
     // Get stats from components
     HardwareStats TLBstats = MC.GetDTLBStats();
     HardwareStats PTstats = MC.GetPTStats();
+    HardwareStats DCstats = MC.GetDCStats();
+
     outputDisplayer.FeedPTStats(PTstats);
     outputDisplayer.FeedTLBStats(TLBstats);
+    outputDisplayer.FeedDCStats(DCstats);
 
     ReferenceStats refStats = MC.GetReferenceCounts();
     outputDisplayer.FeedMiscOutput(refStats);
