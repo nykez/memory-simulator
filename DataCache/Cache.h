@@ -79,6 +79,21 @@ public:
         return TotalDirty;
     }
 
+    // GET POLICY
+    //  0: write-through no write allocate, 1: write-back, write-allocate
+    int GetPolicy()
+    {
+        return Policy;
+    }
+
+    // SET POLICY
+    //  0: write-through no write allocate, 1: write-back, write-allocate
+    void SetPolicy(int policy)
+    {
+        Policy = policy;
+    }
+
+
     bool LRU_IsEntryDirtyBit(int index)
     {
         return Sets->at(index)->LRU_IsEntryDirtyBit();
@@ -88,6 +103,7 @@ private:
     vector<CacheSet*> *Sets; // vector of our CacheSets objects (class)
     int TotalSets; // total ses
     int SetSize; // set size
+    int Policy = 0; // 0: write-through no write allocate, 1: write-back, write-allocate
 };
 
 #endif

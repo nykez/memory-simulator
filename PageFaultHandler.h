@@ -68,7 +68,14 @@ namespace PageFaultHandler {
         if(DTLB != nullptr) {
             DTLB->SetEntryValidity(victimVPN, false);
         }
-        ///TODO: Update DC
+        // Update DC
+        int dirtyCount = DC->Invalidate(victimPFN);
+        if (DC->GetPolicy() == 1) // write-back policy; update mem references
+        {
+            // TODO: Update memory references if write-back policy
+            // TODO: Refactor this class to use only MemoryController
+        }
+
         return victimPFN;
     }
 

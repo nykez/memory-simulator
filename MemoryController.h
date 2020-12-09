@@ -104,6 +104,10 @@ public:
     /// </summary>
     /// <returns>number of references to page table.</returns>    
     int GetReferenceCountToPageTable();
+
+
+    /// Adds to the total count of memory references
+    void AddReferenceCountToMemory(int amountToAdd);
 };
 
 
@@ -120,8 +124,6 @@ MemoryController::MemoryController(MemoryOptions config) {
     // Configure TLB
     DTLB.SetMaxSize(config.tlbEntries);
     
-
-
     // Configure data cache
     // create data cache
     config.dcTotalSets = config.dcEntries / config.dcSetSize;     // calculate total sets
@@ -135,6 +137,7 @@ MemoryController::MemoryController(MemoryOptions config) {
     config.cacheEntriesPerSet = config.dcEntries / config.dcTotalSets;
 
     DC = new Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
+    DC->SetPolicy(config.dcPolicy);
 
     // Determine bit counts
     bitCountOffset = (int)log2((double)config.pageSize);
@@ -176,6 +179,8 @@ TraceStats MemoryController::RunMemory(Trace trace) {
     
     traceW.DCtag = otherTag;
     traceW.DCidx = index;
+
+
 
     return traceW;
 }
@@ -247,6 +252,12 @@ int MemoryController::HandlePageFault(int VPN) {
     return PageFaultHandler::HandleFault(&PT, &DTLB, DC, VPN);
 }
 
+// add to the main memory touches
+void MemoryController::AddReferenceCountToMemory(int amountToAdd)
+{
+    refCountMainMemory = refCountMainMemory + amountToAdd;
+}
+
 /// PURPOSE: Get stats of page table
 /// RETURNS: HardwareStats of page table
 HardwareStats MemoryController::GetPTStats() {
@@ -273,5 +284,6 @@ int MemoryController::GetReferenceCountToMemory() {
 int MemoryController::GetReferenceCountToPageTable() {
     return refCountPageTable;
 }
+
 
 #endif
