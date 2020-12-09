@@ -10,14 +10,18 @@ struct MemoryOptions
     int tlbEntries  = 2;    // # of TLB entries
 
     // PT Options
-    int pageCount   = 64;    // # of virtual pages
+    int pageCount   = 64;   // # of virtual pages
     int frameCount  = 4;    // # of physical frames  
     int pageSize    = 256;  // size of offsets
     
+    int vpnBits     = 6;    // # bits for vpn
+    int pfnBits     = 2;    // # bits for pfn
+    int offBits     = 8;    // # bits for page offset
+
     // DC Options
     int dcEntries   = 4;    // # of cache entries
     int dcTotalSets = 0;    // size of cache sets
-    int dcLineSize  = 16;    // size of cache lines
+    int dcLineSize  = 16;   // size of cache lines
     int dcPolicy    = 1;    // 0: write-through no write allocate, 1: write-back, write-allocate
     int dcSetSize   = 1;    // set size from config file
 

@@ -108,40 +108,55 @@ public:
 
     /// Adds to the total count of memory references
     void AddReferenceCountToMemory(int amountToAdd);
+
     ReferenceStats GetReferenceCounts();
+
+
+    void SetupConfigBits(MemoryOptions* MO);
 };
 
+
+void MemoryController::SetupConfigBits(MemoryOptions* config) {
+    // Internal use
+    bitCountOffset  = (int)log2((double)config->pageSize);
+    bitCountPFN     = (int)log2((double)config->frameCount);
+    bitCountVPN     = (int)log2((double)config->pageCount);
+    
+
+    // Configure data cache
+    config->dcTotalSets = config->dcEntries / config->dcSetSize;     // calculate total sets
+    config->cacheIndexBits = log2(config->dcTotalSets);             // calculate index bits
+    config->cacheOffsetBits = log2(config->dcLineSize);             // calculate offset bits
+    config->cacheTagBits = log2(config->pageSize) +                 // calculate tag bits
+                          log2(config->frameCount) - 
+                          config->cacheIndexBits - 
+                          config->cacheOffsetBits;
+    config->cacheEntriesPerSet = config->dcEntries / config->dcTotalSets;  // entries per set
+
+
+    // For return
+    config->vpnBits = bitCountVPN;
+    config->pfnBits = bitCountPFN;
+    config->offBits = bitCountOffset;
+}
 
 
 
 MemoryController::MemoryController() {
-    //PT = PageTable(64, 4, 256);
-    bitCountOffset = (int)log2((double)256);
-    bitCountPFN = (int)log2((double)4);
-    bitCountVPN = (int)log2((double)4);
+    SetupConfigBits(&MemConfig);
 }
 
+
+
 MemoryController::MemoryController(MemoryOptions config) {
+    SetupConfigBits(&config);
+
     // Configure TLB
     DTLB = new TLB(config.tlbEntries);
     
-    // Configure data cache
-    config.dcTotalSets = config.dcEntries / config.dcSetSize;     // calculate total sets
-    config.cacheIndexBits = log2(config.dcTotalSets);             // calculate index bits
-    config.cacheOffsetBits = log2(config.dcLineSize);             // calculate offset bits
-    config.cacheTagBits = log2(config.pageSize) +                 // calculate tag bits
-                          log2(config.frameCount) - 
-                          config.cacheIndexBits - 
-                          config.cacheOffsetBits;
-    config.cacheEntriesPerSet = config.dcEntries / config.dcTotalSets;  // entries per set
     // create data cache
-    DC = new Cache(config.dcTotalSets, config.dcEntries / config.dcTotalSets);
+    DC = new Cache(config.dcTotalSets, config.cacheEntriesPerSet);
     DC->SetPolicy(config.dcPolicy);
-
-    // Determine bit counts
-    bitCountOffset = (int)log2((double)config.pageSize);
-    bitCountPFN = (int)log2((double)config.frameCount);
-    bitCountVPN = (int)log2((double)config.pageCount);
 
     // create page table
     PT = new PageTable(config.pageCount, config.frameCount, config.pageSize);
@@ -167,9 +182,12 @@ MemoryOptions MemoryController::GetConfigOptions() {
 /// PURPOSE: Runs memory simulation
 TraceStats MemoryController::RunMemory(Trace trace) {
     TraceStats traceW(trace);                // track trace events
-    if(useVirtualMemory)                   // if we use virtual addresses
+    if(useVirtualMemory)                     // if we use virtual addresses
         TranslateVirtualMemory(&traceW);     // transform into physical address
-
+    else {                                   // if we don't use virtual address, get PFN and offset
+        traceW.PFN = (((1 << bitCountPFN) - 1) & (traceW.trace.hexAddress >> bitCountOffset));
+        traceW.pageOffset  = (((1 << bitCountOffset) - 1) & (traceW.trace.hexAddress));
+    }
     // run data cache things
     // get physical address
     int physicalAddress = CalculatePhysicalAddress(traceW.PFN, traceW.pageOffset);
@@ -186,8 +204,7 @@ TraceStats MemoryController::RunMemory(Trace trace) {
     // hit
     if (result)
     {
-        // set trace output to HIT
-        traceW.DCresult = "HIT";
+        traceW.DCresult = "HIT";    // set trace output to HIT
         
         // add hit
         DC->hits++;

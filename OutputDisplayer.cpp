@@ -46,8 +46,8 @@ void OutputDisplayer::DisplayConfig() {
     printf("Number of virtual pages is %d.\n", configOutput.pageCount);
     printf("Number of physical frames is %d.\n", configOutput.frameCount);
     printf("Each page contains %d bytes.\n", configOutput.pageSize);
-    printf("Number of bits for page-table index is [PLACEHOLDER].\n");
-    printf("Number of bits for page offset is [PLACEHOLDER].\n");
+    printf("Number of bits for page-table index is %d.\n", configOutput.vpnBits);
+    printf("Number of bits for page offset is %d.\n", configOutput.offBits);
     printf("\n");
     printf("Data cache contains %d sets.\n", configOutput.dcTotalSets);
     printf("Each set contains %d entries.\n", configOutput.cacheEntriesPerSet);
