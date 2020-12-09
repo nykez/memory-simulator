@@ -185,7 +185,12 @@ int MemoryController::CheckDataTLB(TraceStats* traceW) {
     res = DTLB.LookUp(traceW->VPN);         // check TLB
     if(res.first == false) {                // if TLB MISS
         traceW->TLBresult = "MISS";         // | log MISS
-        return CheckPageTable(traceW);      // | return PFN from page table
+        res.second = CheckPageTable(traceW);// | return PFN from page table
+        int dirtyBit = PT.GetEntryDirty(traceW->VPN);
+        int validBit = PT.GetEntryValidity(traceW->VPN);
+        int accessOrd= PT.GetEntryAccessOrdinal(traceW->VPN);
+        TableEntry te(res.second, dirtyBit, validBit, accessOrd);
+        DTLB.InsertEntry(traceW->VPN, te);
     } else {                                // if TLB HIT
         traceW->TLBresult = "HIT";          // | log HIT
         return res.second;                  // | return PFN from TLB
@@ -212,8 +217,10 @@ int MemoryController::CheckPageTable(TraceStats* traceW) {
 /// PURPOSE: Handle a page fault
 /// RETURNS: PFN
 int MemoryController::HandlePageFault(int VPN) {
-    //return PageFaultHandler::HandleFault(&PT, &DC, VPN);
-    return PageFaultHandler::HandleFault(&PT, VPN);
+    if(useTLB == false) {
+        return PageFaultHandler::HandleFault(&PT, nullptr, DC, VPN);
+    }
+    return PageFaultHandler::HandleFault(&PT, &DTLB, DC, VPN);
 }
 
 /// PURPOSE: Get stats of page table
