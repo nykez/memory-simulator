@@ -25,6 +25,16 @@ SimulationDeployer::~SimulationDeployer() {
 }
 
 
+void SimulationDeployer::Initialize() {
+   // Setup Memory Controller
+    MC = (MO);
+    // Display config
+    outputDisplayer.FeedConfigOutput(MC.GetConfigOptions());
+    outputDisplayer.DisplayConfig();
+    // Setup trace file
+    outputDisplayer.DisplayTraceHeader();
+}
+
 /// <summary>
 /// Initialize our simulation deployer.
 /// Read in config file, parse it, setup our MemoryOption
@@ -72,6 +82,7 @@ void SimulationDeployer::Initialize(const string& configFile, const string& trac
 /// Directs inputReader to gather information from console.
 ///</summary>
 void SimulationDeployer::GatherInput() {
+    //** Example file
     traces.emplace_back(Trace(0,0xC84));
     traces.emplace_back(Trace(0,0x81C));
     traces.emplace_back(Trace(0,0x14C));
@@ -81,6 +92,7 @@ void SimulationDeployer::GatherInput() {
     traces.emplace_back(Trace(0,0x144));
     traces.emplace_back(Trace(0,0xC80));
     traces.emplace_back(Trace(0,0x008));
+    /**/
 }
 
 
@@ -93,7 +105,7 @@ void SimulationDeployer::RunProgram() {
     /// This next section should 
     //For each address in inputReader.inputLines
     // pass into MC, storing results in array
-    //*
+    /*
     while(true) {
         std::pair<bool, std::pair<std::string, std::string>> fileInput = inputReader.ReadTrace();
         if(fileInput.first == true) break;                              // if no more to read, finished.
@@ -104,7 +116,7 @@ void SimulationDeployer::RunProgram() {
         outputDisplayer.DisplayTraceLine(traceStats);                   // display
     }
     /**/
-    /* OLD
+    //* OLD
     for(int i = 0; i < traces.size(); i++) {
         outputDisplayer.DisplayTraceLine(MC.RunMemory(traces[i]));
     }
@@ -122,6 +134,5 @@ void SimulationDeployer::RunProgram() {
     ReferenceStats refStats = MC.GetReferenceCounts();
     outputDisplayer.FeedReferenceOutput(refStats);
 
-    MemoryOptions Options = MC.GetConfigOptions();
-    outputDisplayer.FeedConfigOutput(Options);
+    outputDisplayer.DisplayReferenceStats();
 }

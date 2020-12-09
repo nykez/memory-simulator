@@ -36,6 +36,7 @@ public:
     SimulationDeployer();
     ~SimulationDeployer();
     void Initialize(const string& configFile, const string& traceFile);
+    void Initialize();
     void GatherInput();
     void RunProgram();
 };
