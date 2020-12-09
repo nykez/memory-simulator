@@ -20,6 +20,8 @@
 #include "LookupBuffer/DTLB.h"
 namespace PageFaultHandler {
 
+    int static memoryReferences = 0;
+
     int HandleFault(PageTable* PT, TLB* DTLB, Cache* DC, int VPNindex);
     int FindFreeFrame(PageTable* PT);
     int LRUReplacePage(PageTable* PT, TLB* DTLB, Cache* DC);
@@ -73,7 +75,6 @@ namespace PageFaultHandler {
         if (DC->GetPolicy() == 1) // write-back policy; update mem references
         {
             // TODO: Update memory references if write-back policy
-            // TODO: Refactor this class to use only MemoryController
         }
 
         return victimPFN;
