@@ -31,7 +31,7 @@ private:
     int reads;                     // number of reads
     int writes;                    // number of writes
     double rwRatio;                // read-to-write ratio
-    string policyStr = "";
+    std::string policyStr = "";
 public:
     
     OutputDisplayer(/* args */);
