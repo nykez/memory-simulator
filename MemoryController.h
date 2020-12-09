@@ -181,7 +181,86 @@ TraceStats MemoryController::RunMemory(Trace trace) {
     traceW.DCtag = otherTag;
     traceW.DCidx = index;
 
+    int result = DC->GetEntry(index, otherTag);
 
+    // hit
+    if (result)
+    {
+        traceW.DCresult = "HIT";
+
+        // TODO: ADD DC HIT
+
+        // write through, no write allocate
+        if (MemConfig.dcPolicy == 0)
+        {
+
+            if (trace.accessType == AccessType::Write)
+            {
+                // TODO: update memory reference count
+                refCountMainMemory++;
+            }
+        }
+        // write-back, write allocate
+        else
+        {
+            if (trace.accessType == AccessType::Write)
+            {
+                // update cache (set dirty bit)
+                DC->UpdateDirtyEntry(index, otherTag);
+            }
+        }
+    }
+    else
+    {
+        traceW.DCresult = "MISS";
+        // TODO: add DC miss
+
+        // write through, no write allocate
+        if (MemConfig.dcPolicy == 0)
+        {
+            if (trace.accessType == AccessType::Write)
+            {
+                refCountMainMemory++;
+            }
+            else
+            {
+                // bring in from "memory", update cache
+                refCountMainMemory++;
+                // index, tag, dirtybit, PFN
+                DC->AddEntry(index, otherTag, 0, traceW.PFN);
+            }
+        }
+        // write-back, write allocate
+        else
+        {
+            if (trace.accessType == AccessType::Write)
+            {
+                // Is set dirty?
+                bool IsDirtyBit = DC->LRU_IsEntryDirtyBit(index);
+                // UPDATE cache with new entry (it's  dirty because this is a write)
+                DC->AddEntry(index, otherTag, 1, traceW.PFN);
+                refCountMainMemory++; // "touch/bringin from memory"
+
+                // if replaced cache was dirty then we updated memory
+                if (IsDirtyBit)
+                {
+                    // so update memory counter
+                    refCountMainMemory++;
+                }
+
+
+            }
+            else
+            {
+                // bring in from "memory", update cache
+                refCountMainMemory++;
+                // index, tag, dirtybit, PFN
+                DC->AddEntry(index, otherTag, 0, traceW.PFN); // update the cache
+            }
+        }
+        
+
+    }
 
     return traceW;
 }

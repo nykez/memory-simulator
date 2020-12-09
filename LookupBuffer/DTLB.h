@@ -5,6 +5,7 @@
 #include <map>
 
 #include "../TableEntry.h"
+#include "../HardwareStats.h"
 
 /// <summary>
 /// The Data Translation Look-aside Buffer for the memory simulator.
