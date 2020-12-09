@@ -13,7 +13,7 @@
 #include "DataCache/Cache.h"
 #include "PageTable/PageTable.h"
 #include "LookupBuffer/DTLB.h"
-#include "BinaryConverter.h"
+#include "ReferenceStats.h"
 #include "PageFaultHandler.h"
 #include "Trace.h"
 #include "TraceStats.h"
@@ -108,6 +108,7 @@ public:
 
     /// Adds to the total count of memory references
     void AddReferenceCountToMemory(int amountToAdd);
+    ReferenceStats GetReferenceCounts();
 };
 
 
@@ -264,6 +265,9 @@ HardwareStats MemoryController::GetPTStats() {
     return PT.GetStatistics();
 }
 
+HardwareStats MemoryController::GetDTLBStats() {
+    return DTLB.GetStatistics();
+}
 int MemoryController::CalculatePhysicalAddress(int PFN, int offset) {
     return (PFN << bitCountOffset) | offset;
 }
@@ -273,16 +277,9 @@ int MemoryController::ExtractBits(int number, int k, int p)
     return (((1 << k) - 1) & (number >> (p - 1))); 
 }
 
-int MemoryController::GetReferenceCountToDisk() {
-    return refCountDisk;
-}
-
-int MemoryController::GetReferenceCountToMemory() {
-    return refCountMainMemory;
-}
-
-int MemoryController::GetReferenceCountToPageTable() {
-    return refCountPageTable;
+ReferenceStats MemoryController::GetReferenceCounts() {
+    ReferenceStats refStats(refCountPageTable, refCountMainMemory, refCountDisk);
+    return refStats;
 }
 
 

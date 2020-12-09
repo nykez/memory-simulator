@@ -35,12 +35,11 @@ public:
 	void SetEntryValidity(int VPN, bool state);
 	bool GetEntryDirty(int VPN);
 	void SetEntryDirty(int VPN, bool state);
-	int GetHitCount();
-	int GetMissCount();
 	int GetEntryAccessOrdinal(int VPN);
 	int GetMaxSize();
 	void SetMaxSize(int max_size);
 	int GetSize();
+	HardwareStats GetStatistics();
 };
 
 /// <summary>
@@ -228,21 +227,12 @@ void TLB::SetEntryDirty(int VPN, bool state)
 }
 
 /// <summary>
-/// Gets the TLB hit count.
+/// Sets the dirty bit for the specified table entry.
 /// </summary>
-/// <returns>The TLB hit count.</returns>
-int TLB::GetHitCount()
-{
-	return this->tlb_hits_;
-}
-
-/// <summary>
-/// Gets the TLB miss count.
-/// </summary>
-/// <returns>The TLB miss count.</returns>
-int TLB::GetMissCount()
-{
-	return this->tlb_misses_;
+/// <returns>Returns the hits and misses from this TLB.</returns>
+HardwareStats TLB::GetStatistics() {
+	HardwareStats stats(tlb_hits_, tlb_misses_);
+	return stats;
 }
 
 /// <summary>
