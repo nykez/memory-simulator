@@ -1,14 +1,14 @@
-
-
-/// NAME: MemoryControler
-/// PURPOSE: Manages interactions between PT, TLB, and DC.
-///         Including Evictions, control flow, and returns to Simulation.
-/// AUTHOR: Harrison Lee Pollitte
-/// CREATED: 12/6/2020
-/// NOTES:
-/// * Called by SimulationRunner
-/// * Software Manager of our memory components.
-/// * Linker between them all. Return most stuff to here.
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Project:		GroupProject
+//	File Name:		MemoryController.cpp
+//	Description:    Class that coordinates and controls flow of events in memory management.
+//	Course:			CSCI-4727-940: Operating Systems
+//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
+//	Created:		Saturday, December 5 2020
+//	Copyright:	    Harrison Pollitte 2020
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef MEM_CON_H
 #define MEM_CON_H
@@ -24,7 +24,9 @@
 #include "HardwareStats.h"
 #include <cmath>
 
-
+/// <summary>
+/// Controller of memory management.
+/// </summary>
 class MemoryController {
 private:
     TLB    *DTLB;           // our TLB

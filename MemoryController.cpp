@@ -1,3 +1,14 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Project:		GroupProject
+//	File Name:		MemoryController.cpp
+//	Description:    Implementation of MemoryController.h
+//	Course:			CSCI-4727-940: Operating Systems
+//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
+//	Created:		Sunday, December 6 2020
+//	Copyright:	    Harrison Pollitte 2020
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "MemoryController.h"
 #include "BitUtilities.h"
 #include "TableEntry.h"
