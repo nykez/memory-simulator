@@ -18,5 +18,4 @@ int main()
     // do logic
     // print current logic
     // print end stats
-
 }
