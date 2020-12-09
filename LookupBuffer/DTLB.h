@@ -170,7 +170,7 @@ bool TLB::GetEntryValidity(int VPN)
 	}
 	else
 	{
-		std::cerr << "Couldn't get entry validity: Entry '" << VPN << "' not in TLB" << std::endl;
+		//std::cerr << "Couldn't get entry validity: Entry '" << VPN << "' not in TLB" << std::endl;
 		return false;
 	}
 }
@@ -188,7 +188,7 @@ void TLB::SetEntryValidity(int VPN, bool state)
 	}
 	else
 	{
-		std::cerr << "Couldn't set entry validity: Entry '" << VPN << "' not in TLB" << std::endl;
+		//std::cerr << "Couldn't set entry validity: Entry '" << VPN << "' not in TLB" << std::endl;
 	}
 }
 
@@ -205,7 +205,7 @@ bool TLB::GetEntryDirty(int VPN)
 	}
 	else
 	{
-		std::cerr << "Couldn't get entry dirty bit: Entry '" << VPN << "' not in TLB" << std::endl;
+		//std::cerr << "Couldn't get entry dirty bit: Entry '" << VPN << "' not in TLB" << std::endl;
 		return false;
 	}
 }
@@ -223,7 +223,7 @@ void TLB::SetEntryDirty(int VPN, bool state)
 	}
 	else
 	{
-		std::cerr << "Couldn't set entry dirty bit: Entry '" << VPN << "' not in TLB" << std::endl;
+		//std::cerr << "Couldn't set entry dirty bit: Entry '" << VPN << "' not in TLB" << std::endl;
 	}
 }
 
@@ -249,7 +249,7 @@ int TLB::GetEntryAccessOrdinal(int VPN)
 	}
 	else
 	{
-		std::cerr << "Couldn't get entry LRU: Entry '" << VPN << "' not in TLB" << std::endl;
+		//std::cerr << "Couldn't get entry LRU: Entry '" << VPN << "' not in TLB" << std::endl;
 		return -1;
 	}
 }
