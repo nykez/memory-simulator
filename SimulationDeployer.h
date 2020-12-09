@@ -11,7 +11,7 @@
 #ifndef SIM_DEP_H
 #define SIM_DEP_H
 
-#include "MemoryController.h"
+#include "MemoryController.cpp"
 #include "MemoryOptions.h"
 #include "InputReader.h"
 #include "OutputDisplayer.cpp"
