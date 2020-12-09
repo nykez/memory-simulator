@@ -41,7 +41,13 @@ private:
     int HandlePageFault(int VPN);
     void TranslateVirtualMemory(TraceStats* traceW);
     void AttachVPNandOffset(TraceStats* traceW);
-
+    /// <summary>
+    /// Combine PFN and offset into a physical address.
+    /// </summary>
+    /// <param name="PFN">the Physical Frame Number.</param>
+    /// <param name="offset">the offset into the frame.</param>
+    /// <returns>the physical address.</returns>
+    int CalculatePhysicalAddress(int PFN, int offset);
 public:
     /// Constructor: 
     MemoryController();
@@ -125,8 +131,6 @@ void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
         PFN = CheckPageTable(traceW);   // only check page table
     }
     traceW->PFN = PFN;                  // assign PFN
-
-
 }
 
 /// PURPOSE: Generate and attach VPN and offset to a trace
@@ -176,6 +180,10 @@ int MemoryController::HandlePageFault(int VPN) {
 /// RETURNS: HardwareStats of page table
 HardwareStats MemoryController::GetPTStats() {
     return PT.GetStatistics();
+}
+
+int MemoryController::CalculatePhysicalAddress(int PFN, int offset) {
+    return (PFN << bitCountOffset) | offset;
 }
 
 
