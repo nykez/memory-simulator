@@ -114,8 +114,6 @@ public:
         return TotalDirty; // return number of dirty cache entries for write back to memory (write-back policy)
     }
 
-
-
     // is entry set dirty bit?
     bool LRU_IsEntryDirtyBit()
     {
