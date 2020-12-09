@@ -33,8 +33,31 @@ SimulationDeployer::~SimulationDeployer() {
 void SimulationDeployer::Initialize(const string& configFile, const string& traceFile) {
     // Read config
     ///DAVID: READ IN MAP HERE inputReader.ReadConfigFile(configFile);
+    auto options = inputReader.ReadConfigFile(configFile); //read in config file map
     // Setup config
     ///DAVID: Search through map, assinging things to our MO
+    MO.tlbEntries = stoi(options.at("Number of entries"));
+	MO.pageCount = stoi(options.at("Number of virtual pages"));
+	MO.frameCount = stoi(options.at("Number of physical pages"));
+	MO.pageSize = stoi(options.at("Page size"));
+	MO.dcEntries = stoi(options.at("Number of entries"));
+	MO.dcSetSize = stoi(options.at("Set size"));
+	MO.dcLineSize = stoi(options.at("Line size"));
+	string isWriteConf = options.at("Write through/no write allocate");
+    if (isWriteConf == "N" || isWriteConf == "n")
+    {
+	    //TODO: use write through/no write memory option
+    }
+	string isVirtConf = options.at("Virtual addresses");
+	if (isWriteConf == "N" || isWriteConf == "n")
+    {
+	    MO.useVirt = false;
+    }
+	string isTLBConf = options.at("TLB");
+	if (isWriteConf == "N" || isWriteConf == "n")
+    {
+	    MO.useTLB = false;
+    }
     // Setup Memory Controller
     MC = (MO);
     // Display config
