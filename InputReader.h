@@ -1,12 +1,20 @@
+/*
+ * David Nelson
+ * OS Final Project
+ * 12-09-2020
+ * Operating Systems
+ * InputReader.h
+ * 
+ */
+
 #ifndef INPUTREADER_H
 #define INPUTREADER_H
 
 #include <algorithm>
-#include <cstring>
 #include <iostream>
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 
 /// <summary>
@@ -14,21 +22,21 @@
 /// </summary>
 class InputReader
 {
-	FILE* trace_file;
-	bool trace_reached_eof = false;
-	const static int trace_buffer_len = 64;
-	char trace_buffer[trace_buffer_len];
-	char* trace_line = trace_buffer;
-	unsigned long trace_len = trace_buffer_len;
-	unsigned long trace_read = 0;
-	int trace_line_counter = 0;
+	FILE* trace_file{}; //pointer to the trace file
+	bool trace_reached_eof = false; //bool signifying if EOF has been reached
+	const static int trace_buffer_len = 64; //length of buffer to read lines in the trace file
+	char trace_buffer[trace_buffer_len] = ""; //the buffer holding the current line in the trace file
+	char* trace_line = trace_buffer; //a pointer to the buffer holding the current line in the trace file
+	unsigned long trace_len = trace_buffer_len; //the length of the current line in the trace file
+	unsigned long trace_read = 0; //the number of characters read
+	int trace_line_counter = 0; //a counter to keep a current line count in the trace file
 	
 public:
 
 	InputReader();
 
-	std::vector<std::string> split(std::string& line, const char* delimiter);
-	std::map<std::string, std::string> ReadConfigFile(const std::string& filename);
+	static std::vector<std::string> split(std::string& line, const char* delimiter);
+	std::map<std::string, std::string> ReadConfigFile(const std::string& filename) const;
 	bool SetTraceFile(const std::string& filename);
 	std::pair<bool, std::pair<std::string, std::string>> ReadTrace();
 
@@ -54,7 +62,7 @@ InputReader::InputReader() = default;
 /// <param name="line">The string to split.</param>
 /// <param name="delimiter">The delimiter to split on.</param>
 /// <returns>A vector of strings from the parent string that was split.</returns>
-std::vector<std::string> InputReader::split(std::string& line, const char* delimiter)
+inline std::vector<std::string> InputReader::split(std::string& line, const char* delimiter)
 {
 	std::vector<std::string> v; //vector to hold tokens
 
@@ -81,7 +89,7 @@ std::vector<std::string> InputReader::split(std::string& line, const char* delim
 /// </summary>
 /// <param name="filename">The path to the trace.config file.</param>
 /// <returns>A pair indicating if the operation was successful and a config file options map.</returns>
-std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string& filename)
+inline std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string& filename) const
 {
 	std::map<std::string, std::string> configOptions; //map to hold the config options
 	
@@ -139,7 +147,13 @@ std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string
 	return configOptions;
 }
 
-bool InputReader::SetTraceFile(const std::string& filename)
+/// <summary>
+/// Sets the location of the trace file.
+/// </summary>
+/// <param name="filename">The trace file name.</param>
+/// <returns>True if trace file was found; False if there was
+/// an error finding the trace file.</returns>
+inline bool InputReader::SetTraceFile(const std::string& filename)
 {
 	trace_file = fopen(filename.c_str(), "r");
 	if (trace_file == nullptr)
@@ -151,17 +165,24 @@ bool InputReader::SetTraceFile(const std::string& filename)
 	return true;
 }
 
-std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
+/// <summary>
+/// Returns a trace from the trace file and signifies if the end of
+/// the file was reached.
+/// </summary>
+/// <returns>A pair of format <bool:pair<string:string>> that signifies if EOF was reached
+/// and a pair containing trace properties.</returns>
+inline std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
 {
-	string trace_access;
-	string trace_hex_address;
+	string trace_access; //holds the current trace read/write access type
+	string trace_hex_address; //holds the current trace hex-address
 
+	//Check if the end of the trace file was reached
 	if ((trace_read = getline(&trace_line, &trace_len, trace_file)) != -1)
 	{
-		trace_line_counter++;
+		//if not at end of the trace file
+		trace_line_counter++; //increment the line counter
 		
-		//read line-by-line until EOF
-		auto current_line = std::string{trace_line};
+		auto current_line = std::string{trace_line}; //treat the current line as a string
 
 		//If trace has a ':' delimiter
 		if (current_line.find(':') != std::string::npos)
@@ -183,6 +204,7 @@ std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
 			}
 			else
 			{
+				//if the access type field isn't valid
 				std::cerr << "Could not read access type parameter at line: " << trace_line_counter << std::endl;
 				exit(EXIT_FAILURE);
 			}
@@ -195,6 +217,7 @@ std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
 			}
 			else
 			{
+				//if the hex-address field isn't valid
 				std::cerr << "Could not read hex-address parameter at line: " << trace_line_counter << std::endl;
 				exit(EXIT_FAILURE);
 			}
@@ -204,13 +227,14 @@ std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
 		}
 		else
 		{
+			//if the trace doesn't have a ':' delimiter
 			std::cerr << "Error reading trace at line: " << trace_line_counter << std::endl;
 			exit(EXIT_FAILURE);
-		}
-		
+		}	
 	}
 	else
 	{
+		//if EOF was reached
 		return std::make_pair(true, std::make_pair(trace_access, trace_hex_address));
 	}
 	
@@ -282,4 +306,5 @@ void InputReader::rtrim(std::string &s) const
         return !std::isspace(ch);
     }).base(), s.end());
 }
+
 #endif // INPUTREADER_H
