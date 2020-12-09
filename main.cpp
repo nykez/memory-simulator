@@ -1,4 +1,4 @@
-#include "SimulationDeployer.h"
+#include "SimulationDeployer.cpp"
 #include "TraceStats.h"
 #include "Trace.h"
 // main entry point for program
@@ -8,7 +8,7 @@ int main()
     TraceStats trs(trace);
 
     SimulationDeployer SD;
-    SD.Initialize();
+    SD.Initialize("lol", "lol");
     SD.GatherInput();
     SD.RunProgram();
     // read in config
