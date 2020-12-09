@@ -12,6 +12,7 @@
 #define MEM_CON_H
 #include "DataCache/Cache.h"
 #include "PageTable/PageTable.h"
+#include "LookupBuffer/DTLB.h"
 #include "BinaryConverter.h"
 #include "PageFaultHandler.h"
 #include "Trace.h"
@@ -32,9 +33,14 @@ int CreateBitMasking(int startBit, int endBit)
 
 class MemoryController {
 private:
-    //DTLB TLB;             // our TLB
-    Cache *DC;             // our data cache
+    TLB     DTLB;           // our TLB
+    Cache    *DC;           // our data cache
     PageTable PT;           // our page table
+
+    // Statistics
+    int refCountMainMemory = 0; // number of references to main memory
+    int refCountDisk       = 0; // number of references to external disk
+    int refCountPageTable  = 0; // number of references to page table
 
     MemoryOptions MemConfig;
     // Configuration
@@ -44,6 +50,8 @@ private:
     int bitCountOffset;     // number of bits for offset
     int bitCountVPN;        // number of bits for VPN
     int bitCountPFN;        // number of bits for PFN
+
+
 
     int CheckPageTable(TraceStats* traceW);
     int CheckDataTLB(TraceStats* traceW);
@@ -72,6 +80,30 @@ public:
     HardwareStats GetDCStats();
     MemoryOptions GetConfigOptions();
 
+    /// <summary>
+    /// Get number of references to main memory during simulation.
+    /// Includes:
+    /// * Page table accesses
+    /// * 
+    /// </summary>
+    /// <returns>number of references to main memory.</returns>
+    int GetReferenceCountToMemory();
+
+    /// <summary>
+    /// Get number of references to disk during simulation.
+    /// Includes:
+    /// * Page faults
+    /// </summary>
+    /// <returns>number of references to disk.</returns>
+    int GetReferenceCountToDisk();
+
+    /// <summary>
+    /// Get number of references to page table during simulation.
+    /// Includes:
+    /// * Page table accesses.
+    /// </summary>
+    /// <returns>number of references to page table.</returns>    
+    int GetReferenceCountToPageTable();
 };
 
 
@@ -85,8 +117,12 @@ MemoryController::MemoryController() {
 }
 
 MemoryController::MemoryController(MemoryOptions config) {
-    ///TODO: TLB
+    // Configure TLB
+    DTLB.SetMaxSize(config.tlbEntries);
+    
 
+
+    // Configure data cache
     // create data cache
     config.dcTotalSets = config.dcEntries / config.dcSetSize;     // calculate total sets
     // calculate index bits
@@ -117,6 +153,7 @@ MemoryController::MemoryController(MemoryOptions config) {
 }
 
 MemoryController::~MemoryController() {
+    //delete DC;
 }
 
 MemoryOptions MemoryController::GetConfigOptions() {
@@ -169,22 +206,30 @@ void MemoryController::AttachVPNandOffset(TraceStats* traceW) {
 /// RETURNS: PFN
 int MemoryController::CheckDataTLB(TraceStats* traceW) {
     std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
-    res = {false, 0};                       // PLACEHOLDER for TLB
+    res = DTLB.LookUp(traceW->VPN);         // check TLB
     if(res.first == false) {                // if TLB MISS
         traceW->TLBresult = "MISS";         // | log MISS
-        return CheckPageTable(traceW);      // | return PFN from page table
+        res.second = CheckPageTable(traceW);// | return PFN from page table
+        int dirtyBit = PT.GetEntryDirty(traceW->VPN);
+        int validBit = PT.GetEntryValidity(traceW->VPN);
+        int accessOrd= PT.GetEntryAccessOrdinal(traceW->VPN);
+        TableEntry te(res.second, dirtyBit, validBit, accessOrd);
+        DTLB.InsertEntry(traceW->VPN, te);  // | update TLB
     } else {                                // if TLB HIT
         traceW->TLBresult = "HIT";          // | log HIT
-        return res.second;                  // | return PFN from TLB
     }
+    return res.second;                      // return PFN from TLB
 } 
 
 /// PURPOSE: Check page table for PFN of a given VPN
 /// RETURNS: PFN
 int MemoryController::CheckPageTable(TraceStats* traceW) {
+    refCountPageTable++;                    // we touch page table... 
+    refCountMainMemory++;                   // ... which is in main memory.
     std::pair<bool, int> res;               // first: MISS/HIT(F/T). second: PFN
-    res = PT.TranslateVPN(traceW->VPN);     // check page table
+    res = PT.LookUp(traceW->VPN);           // check page table
     if(res.first == false) {                // if PT MISS
+        refCountDisk++;                     // | go to disk
         traceW->PTresult = "MISS";          // | log MISS
         return HandlePageFault(traceW->VPN);// | return PFN from page fault handler
     } else {                                // if PT HIT
@@ -196,8 +241,10 @@ int MemoryController::CheckPageTable(TraceStats* traceW) {
 /// PURPOSE: Handle a page fault
 /// RETURNS: PFN
 int MemoryController::HandlePageFault(int VPN) {
-    //return PageFaultHandler::HandleFault(&PT, &DC, VPN);
-    return PageFaultHandler::HandleFault(&PT, VPN);
+    if(useTLB == false) {
+        return PageFaultHandler::HandleFault(&PT, nullptr, DC, VPN);
+    }
+    return PageFaultHandler::HandleFault(&PT, &DTLB, DC, VPN);
 }
 
 /// PURPOSE: Get stats of page table
@@ -215,5 +262,16 @@ int MemoryController::ExtractBits(int number, int k, int p)
     return (((1 << k) - 1) & (number >> (p - 1))); 
 }
 
+int MemoryController::GetReferenceCountToDisk() {
+    return refCountDisk;
+}
+
+int MemoryController::GetReferenceCountToMemory() {
+    return refCountMainMemory;
+}
+
+int MemoryController::GetReferenceCountToPageTable() {
+    return refCountPageTable;
+}
 
 #endif

@@ -46,7 +46,7 @@ PageTable(int totalVirtualPages, int totalFrames, int pageSize);
 /// Given VPN, return mapped PFN.
 /// </summary>
 /// <param name="VPN">Virtual Page Number</param>
-std::pair<bool,int> TranslateVPN(int VPN);
+std::pair<bool,int> LookUp(int VPN);
 
 /// <summary>
 /// Parameterized constructor
@@ -143,7 +143,7 @@ PageTable::PageTable(int totalVirtualPages, int totalFrames, int pageSize) {
     }
 }
 
-std::pair<bool, int> PageTable::TranslateVPN(int VPN)
+std::pair<bool, int> PageTable::LookUp(int VPN)
 {
     pageTableReferences++;
 
@@ -167,7 +167,7 @@ std::pair<bool, int> PageTable::TranslateVPN(int VPN)
     // Update reference ordinal
     entries.at(VPN).lastUsed = accessOrdinal;
     accessOrdinal++;
-
+    
     return res;
 }
 
