@@ -165,6 +165,8 @@ std::vector<std::pair<std::string, std::string>> InputReader::ReadTraceFile(cons
 			//Split it into Access and Address
 			auto fields = split(current_line, ":");
 			ltrim(fields[0]);
+			rtrim(fields[0]);
+			ltrim(fields[1]);
 			rtrim(fields[1]);
 			
 			if (fields[0] == "R" || fields[0] == "W" || fields[0] == "r" || fields[0] == "w")
