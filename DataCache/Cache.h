@@ -14,10 +14,13 @@
 
 #include <vector>
 #include "CacheSet.h"
+#include "../HardwareStats.h"
 
 class Cache
 {
 public:
+    int hits = 0;
+    int misses = 0;
 
     // Create a new cache
     // We only have 1 in our program but this can easily be expanded out to use data cache and a instruction cache
@@ -97,6 +100,13 @@ public:
     bool LRU_IsEntryDirtyBit(int index)
     {
         return Sets->at(index)->LRU_IsEntryDirtyBit();
+    }
+
+    // return hardware stats
+    HardwareStats GetStatistics()
+    {
+        HardwareStats stats(hits, misses);
+        return stats;
     }
 
 private:

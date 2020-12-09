@@ -186,9 +186,11 @@ TraceStats MemoryController::RunMemory(Trace trace) {
     // hit
     if (result)
     {
+        // set trace output to HIT
         traceW.DCresult = "HIT";
-
-        // TODO: ADD DC HIT
+        
+        // add hit
+        DC->hits++;
 
         // write through, no write allocate
         if (MemConfig.dcPolicy == 0)
@@ -212,8 +214,11 @@ TraceStats MemoryController::RunMemory(Trace trace) {
     }
     else
     {
+        // set trace output to miss
         traceW.DCresult = "MISS";
-        // TODO: add DC miss
+
+        // add DC miss
+        DC->misses++;
 
         // write through, no write allocate
         if (MemConfig.dcPolicy == 0)
@@ -348,7 +353,7 @@ HardwareStats MemoryController::GetDTLBStats() {
 
 HardwareStats MemoryController::GetDCStats()
 {
-    return DTLB.GetStatistics();
+    return DC->GetStatistics();
 }
 
 
