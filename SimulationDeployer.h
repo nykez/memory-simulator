@@ -66,12 +66,20 @@ void SimulationDeployer::RunProgram() {
     for(int i = 0; i < traceStats.size(); i++) {
         outputDisplayer.AddReferenceInfo(traceStats[i]);
     }
-    
+
+    // Get stats from components
+    HardwareStats TLBstats = MC.GetDTLBStats();
     HardwareStats PTstats = MC.GetPTStats();
+    outputDisplayer.FeedPTStats(PTstats);
+    outputDisplayer.FeedTLBStats(TLBstats);
+
+    outputDisplayer.FeedMiscOutput();
     MemoryOptions Options = MC.GetConfigOptions();
 
     outputDisplayer.FeedConfigOutput(Options);
-    outputDisplayer.FeedPTStats(PTstats);
+
+
+
 
     outputDisplayer.DisplayAll();
 }
