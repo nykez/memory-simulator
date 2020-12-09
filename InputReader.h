@@ -14,6 +14,14 @@
 /// </summary>
 class InputReader
 {
+	FILE* trace_file;
+	bool trace_reached_eof = false;
+	const static int trace_buffer_len = 64;
+	char trace_buffer[trace_buffer_len];
+	char* trace_line = trace_buffer;
+	unsigned long trace_len = trace_buffer_len;
+	unsigned long trace_read = 0;
+	int trace_line_counter = 0;
 	
 public:
 
@@ -29,7 +37,8 @@ public:
 	static bool is_yn(const std::string& s);
 	void ltrim(std::string& s) const;
 	void rtrim(std::string& s) const;
-	FILE* trace_file;
+	
+	
 };
 
 /// <summary>
@@ -144,91 +153,68 @@ bool InputReader::SetTraceFile(const std::string& filename)
 
 std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
 {
-	bool reached_eof = false;
 	string trace_access;
 	string trace_hex_address;
 
-	return std::make_pair(reached_eof, std::make_pair(trace_access, trace_hex_address));
-}
-
-/// <summary>
-/// Reads the the specified trace file and returns a vector of trace pairs of format: <accesstype>:<hexaddress>.
-/// </summary>
-/// <param name="filename">The path to the trace file to read.</param>
-/// <returns>A pair holding whether the operation was successful and a vector holding trace pairs.</returns>
-std::pair<bool, std::vector<std::pair<std::string, std::string>>> InputReader::ReadTraceFile(const std::string& filename)
-{
-	auto eof_reached = false;
-	std::vector<std::pair<std::string, std::string>> traces; //a list of traces
-	std::pair<std::string, std::string> trace; //a trace
-	
-	//Options used to read trace file
-	const auto buffer_len = 64; //size for line buffer when reading trace file
-	char buffer[buffer_len] = ""; //buffer for lines when reading trace file
-	auto* line = buffer; //pointer to the buffer to hold each line
-	unsigned long len = buffer_len; //the length of the buffer
-	unsigned long read = 0; //the amount of characters read
-
-	//Read in traces from file
-	auto* trace_file = fopen(filename.c_str(), "r"); //attempt to open the file to read
-	if (trace_file == nullptr) //if the file wasn't found
+	if ((trace_read = getline(&trace_line, &trace_len, trace_file)) != -1)
 	{
-		perror("Error opening trace file");
-		exit(EXIT_FAILURE);
-	}
-
-	//Read trace file line by line
-	auto line_counter = 0; //counter for lines read
-	while ((read = getline(&line, &len, trace_file)) != -1)
-	{
-		auto current_line = std::string{line}; //treat current line as a string
-		line_counter++; //increment the line
+		trace_line_counter++;
 		
-		//If the trace has a ':' delimiter
+		//read line-by-line until EOF
+		auto current_line = std::string{trace_line};
+
+		//If trace has a ':' delimiter
 		if (current_line.find(':') != std::string::npos)
 		{
-			//Split it into Access and Address
+			//split line into Access and Address
 			auto fields = split(current_line, ":");
-			ltrim(fields[0]);
-			rtrim(fields[0]);
-			ltrim(fields[1]);
-			rtrim(fields[1]);
-			
+			for (auto &field : fields)
+			{
+				//trim the elements on left and right
+				ltrim(field);
+				rtrim(field);
+			}
+
+			//Check if first element is valid access type
 			if (fields[0] == "R" || fields[0] == "W" || fields[0] == "r" || fields[0] == "w")
 			{
 				//Read/Write Field is valid
-				trace.first = fields[0];
+				trace_access = fields[0];
 			}
 			else
 			{
-				std::cerr << "Could not read access type parameter at line: " << line_counter << std::endl;
+				std::cerr << "Could not read access type parameter at line: " << trace_line_counter << std::endl;
 				exit(EXIT_FAILURE);
 			}
-
+			
+			//Check if second element is valid hex address
 			if (is_hex(fields[1]) == true)
 			{
 				//Hex address field is valid
-				trace.second = fields[1];
+				trace_hex_address = fields[1];
 			}
 			else
 			{
-				std::cerr << "Could not read hex-address parameter at line: " << line_counter << std::endl;
+				std::cerr << "Could not read hex-address parameter at line: " << trace_line_counter << std::endl;
 				exit(EXIT_FAILURE);
 			}
 
-			//Push the trace pair onto the trace vector
-			traces.push_back(std::make_pair(trace.first, trace.second));
+			//return the valid trace
+			return std::make_pair(false, std::make_pair(trace_access, trace_hex_address));
 		}
 		else
 		{
-			std::cerr << "Error reading trace at line: " << line_counter << std::endl;
+			std::cerr << "Error reading trace at line: " << trace_line_counter << std::endl;
 			exit(EXIT_FAILURE);
 		}
+		
 	}
-
-	eof_reached = true;
+	else
+	{
+		return std::make_pair(true, std::make_pair(trace_access, trace_hex_address));
+	}
 	
-	return std::make_pair(eof_reached, traces); //return the list of traces
+	return {};
 }
 
 //Lambda function determines if string is an integer
@@ -281,7 +267,7 @@ bool inline InputReader::is_yn(const std::string& s)
 
 //Trim string from start (in place)
 // https://stackoverflow.com/a/217605/14352318
-inline void InputReader::ltrim(std::string &s) const
+void InputReader::ltrim(std::string &s) const
 {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
@@ -290,7 +276,7 @@ inline void InputReader::ltrim(std::string &s) const
 
 //Trim string from end (in place)
 //https://stackoverflow.com/a/217605/14352318
-inline void InputReader::rtrim(std::string &s) const
+void InputReader::rtrim(std::string &s) const
 {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
         return !std::isspace(ch);
