@@ -190,11 +190,11 @@ int MemoryController::CheckDataTLB(TraceStats* traceW) {
         int validBit = PT.GetEntryValidity(traceW->VPN);
         int accessOrd= PT.GetEntryAccessOrdinal(traceW->VPN);
         TableEntry te(res.second, dirtyBit, validBit, accessOrd);
-        DTLB.InsertEntry(traceW->VPN, te);
+        DTLB.InsertEntry(traceW->VPN, te);  // | update TLB
     } else {                                // if TLB HIT
         traceW->TLBresult = "HIT";          // | log HIT
-        return res.second;                  // | return PFN from TLB
     }
+    return res.second;                      // return PFN from TLB
 } 
 
 /// PURPOSE: Check page table for PFN of a given VPN
