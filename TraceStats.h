@@ -21,7 +21,10 @@ struct TraceStats
     int DCidx               = 0;    // HEX
     std::string DCresult    = "MISS";    // HIT/MISS
 
-
+    /// <summary>
+    /// Parameterized constructor.
+    /// </summary>
+    /// <param name="tr">the initial trace.</param>
     TraceStats(Trace tr) {
         trace = tr;
     }

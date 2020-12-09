@@ -1,3 +1,15 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Project:		GroupProject
+//	File Name:		PageTable.cpp
+//	Description:    Implementation of PageTable.h
+//	Course:			CSCI-4727-940: Operating Systems
+//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
+//	Created:		Wednesday, December 2 2020
+//	Copyright:	    Harrison Pollitte 2020
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "PageTable.h"
 
 PageTable::PageTable() {

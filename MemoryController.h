@@ -1,3 +1,5 @@
+
+
 /// NAME: MemoryControler
 /// PURPOSE: Manages interactions between PT, TLB, and DC.
 ///         Including Evictions, control flow, and returns to Simulation.
@@ -43,68 +45,24 @@ private:
     int bitCountVPN;        // number of bits for VPN
     int bitCountPFN;        // number of bits for PFN
 
-
-
     int CheckPageTable(TraceStats* traceW);
     int CheckDataTLB(TraceStats* traceW);
     int HandlePageFault(int VPN);
     void TranslateVirtualMemory(TraceStats* traceW);
     void AttachVPNandOffset(TraceStats* traceW);
     int ExtractBits(int number, int k, int p);
-    /// <summary>
-    /// Combine PFN and offset into a physical address.
-    /// </summary>
-    /// <param name="PFN">the Physical Frame Number.</param>
-    /// <param name="offset">the offset into the frame.</param>
-    /// <returns>the physical address.</returns>
     int CalculatePhysicalAddress(int PFN, int offset);
-public:
-    /// Constructor: 
+    void SetupConfigBits(MemoryOptions* MO);
+public: 
     MemoryController();
     MemoryController(MemoryOptions config);
-    /// die
     ~MemoryController();
-
-    // public interface for using controller.
     TraceStats RunMemory(Trace trace);
     HardwareStats GetPTStats();
     HardwareStats GetDTLBStats();
     HardwareStats GetDCStats();
     MemoryOptions GetConfigOptions();
-
-    /// <summary>
-    /// Get number of references to main memory during simulation.
-    /// Includes:
-    /// * Page table accesses
-    /// * 
-    /// </summary>
-    /// <returns>number of references to main memory.</returns>
-    int GetReferenceCountToMemory();
-
-    /// <summary>
-    /// Get number of references to disk during simulation.
-    /// Includes:
-    /// * Page faults
-    /// </summary>
-    /// <returns>number of references to disk.</returns>
-    int GetReferenceCountToDisk();
-
-    /// <summary>
-    /// Get number of references to page table during simulation.
-    /// Includes:
-    /// * Page table accesses.
-    /// </summary>
-    /// <returns>number of references to page table.</returns>    
-    int GetReferenceCountToPageTable();
-
-
-    /// Adds to the total count of memory references
-    void AddReferenceCountToMemory(int amountToAdd);
-
     ReferenceStats GetReferenceCounts();
-
-
-    void SetupConfigBits(MemoryOptions* MO);
 };
 
 

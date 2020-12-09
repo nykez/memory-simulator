@@ -21,14 +21,13 @@
 /// </summary>
 class PageTable {
 private:
-//int pageSize = 0;
 int frameCount = 0;                  // number of frames in use.
 int maxFrameCount = 0;               // max frames allowed.
 int accessOrdinal = 1;               // largest == most recently used. 
 int pageTableReferences = 0;         // amount of times we've referenced this table
 int hits = 0;                        // number of page table hits
 int misses = 0;                      // number of page table misses
-std::vector<TableEntry> entries;     //[TODO]: map <VPN,PTE>
+std::vector<TableEntry> entries;     // table entries
 
 public:    
 // Default constructor. Doesn't do anything.
