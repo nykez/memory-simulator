@@ -1,5 +1,6 @@
 #include "MemoryController.h"
 #include "BitUtilities.h"
+#include "TableEntry.h"
 
 /// <summary>
 /// Setup the passed configuration, filling in missing data.
