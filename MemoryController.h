@@ -14,7 +14,7 @@
 #include "PageTable/PageTable.h"
 #include "LookupBuffer/DTLB.h"
 #include "ReferenceStats.h"
-#include "PageFaultHandler.h"
+#include "PageFaultHandler.cpp"
 #include "Trace.h"
 #include "TraceStats.h"
 #include "MemoryOptions.h"
