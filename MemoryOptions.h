@@ -18,7 +18,7 @@ struct MemoryOptions
     int dcEntries   = 4;    // # of cache entries
     int dcTotalSets = 0;    // size of cache sets
     int dcLineSize  = 16;    // size of cache lines
-    int dcPolicy    = 0;    // write policy for cache
+    int dcPolicy    = 1;    // 0: write-through no write allocate, 1: write-back, write-allocate
     int dcSetSize   = 1;    // set size from config file
 
     int cacheTagBits    =   0; // number of tag index bits

@@ -22,6 +22,15 @@
 #include "HardwareStats.h"
 #include <cmath>
 
+int CreateBitMasking(int startBit, int endBit)
+{
+	int mask = 0;
+	for (int i = startBit; i <= endBit; ++i) {
+		mask |= 1 << i;
+	}
+	return mask;
+}
+
 class MemoryController {
 private:
     TLB     DTLB;           // our TLB
@@ -49,6 +58,7 @@ private:
     int HandlePageFault(int VPN);
     void TranslateVirtualMemory(TraceStats* traceW);
     void AttachVPNandOffset(TraceStats* traceW);
+    int ExtractBits(int number, int k, int p);
     /// <summary>
     /// Combine PFN and offset into a physical address.
     /// </summary>
@@ -71,32 +81,6 @@ public:
     MemoryOptions GetConfigOptions();
 
     ReferenceStats GetReferenceCounts();
-    }
-
-    /// <summary>
-    /// Get number of references to main memory during simulation.
-    /// Includes:
-    /// * Page table accesses
-    /// * 
-    /// </summary>
-    /// <returns>number of references to main memory.</returns>
-    int GetReferenceCountToMemory();
-
-    /// <summary>
-    /// Get number of references to disk during simulation.
-    /// Includes:
-    /// * Page faults
-    /// </summary>
-    /// <returns>number of references to disk.</returns>
-    int GetReferenceCountToDisk();
-
-    /// <summary>
-    /// Get number of references to page table during simulation.
-    /// Includes:
-    /// * Page table accesses.
-    /// </summary>
-    /// <returns>number of references to page table.</returns>    
-    int GetReferenceCountToPageTable();
 };
 
 
@@ -158,6 +142,18 @@ TraceStats MemoryController::RunMemory(Trace trace) {
     TraceStats traceW(trace);                // track trace events
     if(useVirtualMemory)                   // if we use virtual addresses
         TranslateVirtualMemory(&traceW);     // transform into physical address
+
+    // run data cache things
+    // get physical address
+    int physicalAddress = CalculatePhysicalAddress(traceW.PFN, traceW.pageOffset);
+    // get cache index
+    int index = (physicalAddress & CreateBitMasking(MemConfig.cacheOffsetBits, MemConfig.cacheOffsetBits + MemConfig.cacheIndexBits -1)) >> MemConfig.cacheOffsetBits;
+    // get cache tag
+    int otherTag = (physicalAddress & CreateBitMasking(MemConfig.cacheOffsetBits + MemConfig.cacheIndexBits, 31)) >> (MemConfig.cacheOffsetBits + MemConfig.cacheIndexBits);
+    
+    traceW.DCtag = otherTag;
+    traceW.DCidx = index;
+
     return traceW;
 }
 
@@ -170,6 +166,8 @@ void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
     } else {                            // if we don't use DTLB
         PFN = CheckPageTable(traceW);   // only check page table
     }
+
+
     traceW->PFN = PFN;                  // assign PFN
 }
 
@@ -234,6 +232,14 @@ HardwareStats MemoryController::GetPTStats() {
 
 HardwareStats MemoryController::GetDTLBStats() {
     return DTLB.GetStatistics();
+}
+int MemoryController::CalculatePhysicalAddress(int PFN, int offset) {
+    return (PFN << bitCountOffset) | offset;
+}
+
+int MemoryController::ExtractBits(int number, int k, int p)
+{
+    return (((1 << k) - 1) & (number >> (p - 1))); 
 }
 
 int MemoryController::CalculatePhysicalAddress(int PFN, int offset) {
