@@ -24,6 +24,13 @@ public:
     TableEntry(int pfn) {
         PFN = pfn;
     }
+
+    TableEntry(int pfn, bool dirty, bool valid, int used) {
+        PFN = pfn;
+        dirtyBit = dirty;
+        validBit = valid;
+        lastUsed = used;
+    }
 };
 
 #endif //TABLE_ENTRY_H
