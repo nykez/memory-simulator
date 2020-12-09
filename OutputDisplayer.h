@@ -32,9 +32,6 @@ public:
     /// PURPOSE: Set configOutput
     void FeedConfigOutput(MemoryOptions mem);
 
-    /// PURPOSE: Add to traceOutput
-    void AddReferenceInfo(TraceStats referenceInfo); 
-
     /// PURPOSE: Set TLBOutput
     void FeedTLBStats(HardwareStats stats);
 

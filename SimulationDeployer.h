@@ -13,7 +13,7 @@
 
 #include "MemoryController.h"
 #include "MemoryOptions.h"
-#include "OutputDisplayer.h"
+#include "OutputDisplayer.cpp"
 #include "Trace.h"
 #include "TraceStats.h"
 
@@ -86,11 +86,7 @@ void SimulationDeployer::RunProgram() {
     //For each address in inputReader.inputLines
     // pass into MC, storing results in array
     for(int i = 0; i < traces.size(); i++) {
-        traceStats.push_back(MC.RunMemory(traces[i]));
-    }
-    // Add to output
-    for(int i = 0; i < traceStats.size(); i++) {
-        outputDisplayer.AddReferenceInfo(traceStats[i]);
+        outputDisplayer.DisplayTraceLine(MC.RunMemory(traces[i]));
     }
 
     // Get stats from components

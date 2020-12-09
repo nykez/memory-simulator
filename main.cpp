@@ -8,6 +8,7 @@ int main()
     TraceStats trs(trace);
 
     SimulationDeployer SD;
+    SD.Initialize();
     SD.GatherInput();
     SD.RunProgram();
     // read in config
