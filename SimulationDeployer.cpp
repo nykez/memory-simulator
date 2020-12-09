@@ -12,9 +12,12 @@
 #include "SimulationDeployer.h"
 
 /// <summary>
-/// Default constructor
+/// Parameterized construtor
 /// </summary>
-SimulationDeployer::SimulationDeployer() {
+/// <param name="configFilePath">path to config file</param>
+/// <param name="traceFilePath">path to trace file</param>
+SimulationDeployer::SimulationDeployer(const string& configFilePath, const string& traceFilePath) {
+    
 }
 
 

@@ -33,7 +33,7 @@ private:
     vector<Trace> traces;
     MemoryOptions MO;
 public:
-    SimulationDeployer();
+    SimulationDeployer(const string& configFilePath, const string& traceFilePath);
     ~SimulationDeployer();
     void Initialize();
     void GatherInput();
