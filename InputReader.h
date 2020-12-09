@@ -5,8 +5,9 @@
 #include <cstring>
 #include <iostream>
 #include <map>
-#include <string>
 #include <vector>
+#include <string>
+
 
 /// <summary>
 /// Handles reading of config and trace files.
@@ -19,8 +20,9 @@ public:
 	InputReader();
 
 	std::vector<std::string> split(std::string& line, const char* delimiter);
-	std::map<std::string, std::string> ReadConfigFile(const std::string& filename);
-	std::vector<std::pair<std::string, std::string>> ReadTraceFile(const std::string& filename);
+	std::pair<bool, std::map<std::string, std::string>> ReadConfigFile(const std::string& filename);
+	std::pair<bool, std::vector<std::pair<std::string, std::string>>> ReadTraceFile(const std::string& filename);
+
 	bool is_integer(const std::string& s) const;
 	bool is_hex(const std::string& s) const;
 	static bool is_yn(const std::string& s);
@@ -67,9 +69,12 @@ std::vector<std::string> InputReader::split(std::string& line, const char* delim
 /// Reads in a trace.config file and returns a map of config file options.
 /// </summary>
 /// <param name="filename">The path to the trace.config file.</param>
-/// <returns>The config file options.</returns>
-std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string& filename)
+/// <returns>A pair indicating if the operation was successful and a config file options map.</returns>
+std::pair<bool, std::map<std::string, std::string>> InputReader::ReadConfigFile(const std::string& filename)
 {
+	auto eof_reached = false; //used to signal if a file was read successfully
+	std::map<std::string, std::string> configOptions; //map to hold the config options
+	
 	//Options used to read config file
 	const auto buffer_len = 512; //size for line buffer when reading config file
 	char buffer[buffer_len] = ""; //buffer for lines when reading config file
@@ -84,9 +89,6 @@ std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string
 		perror("Error opening config file");
 		exit(EXIT_FAILURE);
 	}
-
-	
-	std::map<std::string, std::string> configOptions; //map to hold the config options
 	
 	//If the file was found, read it line by line
 	auto line_counter = 0; //counter for lines read
@@ -124,16 +126,18 @@ std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string
 		}
 	}
 	
-	return configOptions;
+	eof_reached = true;
+	return std::make_pair(eof_reached, configOptions);
 }
 
 /// <summary>
 /// Reads the the specified trace file and returns a vector of trace pairs of format: <accesstype>:<hexaddress>.
 /// </summary>
 /// <param name="filename">The path to the trace file to read.</param>
-/// <returns>The vector holding trace pairs.</returns>
-std::vector<std::pair<std::string, std::string>> InputReader::ReadTraceFile(const std::string& filename)
+/// <returns>A pair holding whether the operation was successful and a vector holding trace pairs.</returns>
+std::pair<bool, std::vector<std::pair<std::string, std::string>>> InputReader::ReadTraceFile(const std::string& filename)
 {
+	auto eof_reached = false;
 	std::vector<std::pair<std::string, std::string>> traces; //a list of traces
 	std::pair<std::string, std::string> trace; //a trace
 	
@@ -200,8 +204,10 @@ std::vector<std::pair<std::string, std::string>> InputReader::ReadTraceFile(cons
 			exit(EXIT_FAILURE);
 		}
 	}
+
+	eof_reached = true;
 	
-	return traces; //return the list of traces
+	return std::make_pair(eof_reached, traces); //return the list of traces
 }
 
 //Lambda function determines if string is an integer
