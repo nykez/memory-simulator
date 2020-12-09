@@ -17,19 +17,17 @@
 #include <iostream>
 #include "PageTable/PageTable.h"
 #include "DataCache/Cache.h"
+#include "LookupBuffer/DTLB.h"
 namespace PageFaultHandler {
 
-    static int diskReferences = 0;
-
-    int HandleFault(PageTable* PT, int VPNindex);
+    int HandleFault(PageTable* PT, TLB* DTLB, Cache* DC, int VPNindex);
     int FindFreeFrame(PageTable* PT);
-    int LRUReplacePage(PageTable* PT);
+    int LRUReplacePage(PageTable* PT, TLB* DTLB, Cache* DC);
 
-    int HandleFault(PageTable* PT, int VPNindex) {
+    int HandleFault(PageTable* PT, TLB* DTLB, Cache* DC, int VPNindex) {
         int PFN = FindFreeFrame(PT);        // Find free frame to use.
         if(PFN == -1) {                     // Is there a free frame?
-            PFN = LRUReplacePage(PT);       // If not, swap out a frame.
-            diskReferences++;               // We touched disk.
+            PFN = LRUReplacePage(PT, DTLB, DC); // If not, swap out a frame.
         }
         PT->SetEntryPFN(VPNindex, PFN);     // Update entry's PFN.
         PT->SetEntryValidity(VPNindex,true);// Set as now valid.
@@ -50,7 +48,7 @@ namespace PageFaultHandler {
     /// </summary>
     /// <param name="PT">pointer to page table</param>
     /// <returns>PFN of victim entry.</returns>
-    int LRUReplacePage(PageTable* PT) {
+    int LRUReplacePage(PageTable* PT, TLB* DTLB, Cache* DC) {
         int LRU = PT->GetAccessOrdinal();
         int victimPFN = -1;
         int victimVPN = 0;
@@ -67,7 +65,9 @@ namespace PageFaultHandler {
         }        
         // Update victim entry
         PT->SetEntryValidity(victimVPN, false);
-        ///TODO: Update TLB
+        if(DTLB != nullptr) {
+            DTLB->SetEntryValidity(victimVPN, false);
+        }
         ///TODO: Update DC
         return victimPFN;
     }
