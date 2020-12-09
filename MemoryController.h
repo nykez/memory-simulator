@@ -143,7 +143,7 @@ MemoryController::MemoryController(MemoryOptions config) {
 }
 
 MemoryController::~MemoryController() {
-    delete DC;
+    //delete DC;
 }
 
 MemoryOptions MemoryController::GetConfigOptions() {

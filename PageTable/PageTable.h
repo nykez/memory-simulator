@@ -167,7 +167,7 @@ std::pair<bool, int> PageTable::LookUp(int VPN)
     // Update reference ordinal
     entries.at(VPN).lastUsed = accessOrdinal;
     accessOrdinal++;
-
+    
     return res;
 }
 

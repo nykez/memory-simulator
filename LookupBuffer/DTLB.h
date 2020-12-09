@@ -116,7 +116,8 @@ void TLB::InsertEntry(int VPN, TableEntry entry)
 {
 	auto vpn_to_insert = VPN; //get VPN to insert
 	auto entry_to_insert = entry; //get entry to insert
-	
+	entry_to_insert.lastUsed = GetAccessOrdinal();
+	access_ordinal_++;
 	//Check if the TLB has free space
 	if (mappings_.size() < max_size_)
 	{
