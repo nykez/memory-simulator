@@ -12,6 +12,12 @@ OutputDisplayer::~OutputDisplayer() {
 
 void OutputDisplayer::FeedConfigOutput(MemoryOptions mem) {
     this->configOutput = mem;
+    if(configOutput.dcPolicy == 0) {
+        policyStr = "Write-Through";
+    }
+    else {
+        policyStr = "Write-Back";
+    }
 }
 
 void OutputDisplayer::FeedTLBStats(HardwareStats stats) {
@@ -52,7 +58,7 @@ void OutputDisplayer::DisplayConfig() {
     printf("Data cache contains %d sets.\n", configOutput.dcTotalSets);
     printf("Each set contains %d entries.\n", configOutput.cacheEntriesPerSet);
     printf("Each line is %d bytes.\n", configOutput.dcLineSize);
-    printf("The set uses a [PLACEHOLDER] policy\n");
+    printf("The set uses a %s policy\n", policyStr.c_str());
     printf("Number of bits used for the tag is %d.\n", configOutput.cacheTagBits);
     printf("Number of bits used for the index  is %d.\n", configOutput.cacheIndexBits);
     printf("Number of bits used for the offset is %d.\n", configOutput.cacheOffsetBits);

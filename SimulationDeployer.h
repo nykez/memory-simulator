@@ -13,15 +13,16 @@
 
 #include "MemoryController.h"
 #include "MemoryOptions.h"
+#include "InputReader.h"
 #include "OutputDisplayer.cpp"
 #include "Trace.h"
 #include "TraceStats.h"
-
+#include <string>
 #include <vector>
 
 class SimulationDeployer {
 private:
-    //InputReader inputReader;
+    InputReader inputReader;
     OutputDisplayer outputDisplayer;
     MemoryController MC;        //ptr to MemoryController of this program simulation
     vector<Trace> traces;
@@ -44,7 +45,6 @@ public:
 };
 
 SimulationDeployer::SimulationDeployer() {
-    MC = MemoryController(MO);
 }
 
 SimulationDeployer::~SimulationDeployer() {
@@ -54,11 +54,14 @@ void SimulationDeployer::Initialize() {
     // Read config
     ///DAVID:
     // Setup config
-    ///DAVID:
+    
+    // Setup Memory Controller
+    MC = (MO);
     // Display config
-    outputDisplayer.FeedConfigOutput(MO);
+    outputDisplayer.FeedConfigOutput(MC.GetConfigOptions());
     outputDisplayer.DisplayConfig();
-    // Prepare to read traces
+    // Setup trace file
+    outputDisplayer.DisplayTraceHeader();
     ///DAVID:
 }
 
@@ -79,16 +82,24 @@ void SimulationDeployer::GatherInput() {
 
 
 void SimulationDeployer::RunProgram() {
-    // Read in trace from inputReader
-    /// DAVID: I need to read in traces, line-by-line, until file is empty
-
-    std::vector<TraceStats> traceStats;
     //For each address in inputReader.inputLines
     // pass into MC, storing results in array
-    outputDisplayer.DisplayTraceHeader();
+    /*
+    while(true) {
+        std::pair<bool, std::pair<std::string, std::string>> fileInput = inputReader.ReadTraceFile();
+        if(fileInput.first == true) break;                              // if no more to read, finished.
+        int accessType = std::stoi(fileInput.second.first,nullptr,10);  // get access type
+        int hexaddr = std::stoi(fileInput.second.second, nullptr, 16);  // get hex address
+        Trace trace(accessType,hexaddr);
+        TraceStats traceStats = MC.RunMemory(trace);
+        outputDisplayer.DisplayTraceLine(traceStats);
+    }
+    /**/
+    //* 
     for(int i = 0; i < traces.size(); i++) {
         outputDisplayer.DisplayTraceLine(MC.RunMemory(traces[i]));
     }
+    /**/
 
     // Get stats from components
     HardwareStats TLBstats = MC.GetDTLBStats();
@@ -101,8 +112,8 @@ void SimulationDeployer::RunProgram() {
 
     ReferenceStats refStats = MC.GetReferenceCounts();
     outputDisplayer.FeedMiscOutput(refStats);
-    MemoryOptions Options = MC.GetConfigOptions();
 
+    MemoryOptions Options = MC.GetConfigOptions();
     outputDisplayer.FeedConfigOutput(Options);
 }
 

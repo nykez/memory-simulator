@@ -11,14 +11,13 @@
 #ifndef MEM_CON_H
 #define MEM_CON_H
 #include "DataCache/Cache.h"
-#include "PageTable/PageTable.h"
+#include "PageTable/PageTable.cpp"
 #include "LookupBuffer/DTLB.cpp"
 #include "ReferenceStats.h"
 #include "PageFaultHandler.cpp"
 #include "Trace.h"
 #include "TraceStats.h"
 #include "MemoryOptions.h"
-#include "AddressStructs.h"
 #include "HardwareStats.h"
 #include <cmath>
 
@@ -127,12 +126,8 @@ void MemoryController::SetupConfigBits(MemoryOptions* config) {
     config->dcTotalSets = config->dcEntries / config->dcSetSize;     // calculate total sets
     config->cacheIndexBits = log2(config->dcTotalSets);             // calculate index bits
     config->cacheOffsetBits = log2(config->dcLineSize);             // calculate offset bits
-    config->cacheTagBits = log2(config->pageSize) +                 // calculate tag bits
-                          log2(config->frameCount) - 
-                          config->cacheIndexBits - 
-                          config->cacheOffsetBits;
+    config->cacheTagBits = log2(config->pageSize) + (config->frameCount) - config->cacheIndexBits - config->cacheOffsetBits;
     config->cacheEntriesPerSet = config->dcEntries / config->dcTotalSets;  // entries per set
-
 
     // For return
     config->vpnBits = bitCountVPN;
@@ -301,8 +296,6 @@ void MemoryController::TranslateVirtualMemory(TraceStats* traceW) {
 
 /// PURPOSE: Generate and attach VPN and offset to a trace
 void MemoryController::AttachVPNandOffset(TraceStats* traceW) {
-    VirtualAddress virtAddr(traceW->trace.hexAddress, bitCountOffset);
-    //NOTE: We can make trace hold a bit-array if necessary. We have to change this tho (it isn't hard to change).
     traceW->VPN         = (((1 << bitCountVPN) - 1) & (traceW->trace.hexAddress >> bitCountOffset));
     traceW->pageOffset  = (((1 << bitCountOffset) - 1) & (traceW->trace.hexAddress));
 }
