@@ -29,8 +29,18 @@ private:
 public:
     SimulationDeployer();
     ~SimulationDeployer();
+
+    /// <summary>
+    /// Read config file and set up Memory Controller
+    /// </summary>
+    void Initialize();
+
+
     void GatherInput();
+
+
     void RunProgram();
+
 };
 
 SimulationDeployer::SimulationDeployer() {
@@ -38,6 +48,18 @@ SimulationDeployer::SimulationDeployer() {
 }
 
 SimulationDeployer::~SimulationDeployer() {
+}
+
+void SimulationDeployer::Initialize() {
+    // Read config
+    ///DAVID:
+    // Setup config
+    ///DAVID:
+    // Display config
+    outputDisplayer.FeedConfigOutput(MO);
+    outputDisplayer.DisplayConfig();
+    // Prepare to read traces
+    ///DAVID:
 }
 
 ///<summary>
@@ -55,7 +77,11 @@ void SimulationDeployer::GatherInput() {
     traces.emplace_back(Trace(0,0x008));
 }
 
+
 void SimulationDeployer::RunProgram() {
+    // Read in trace from inputReader
+    /// DAVID: I need to read in traces, line-by-line, until file is empty
+
     std::vector<TraceStats> traceStats;
     //For each address in inputReader.inputLines
     // pass into MC, storing results in array
@@ -81,11 +107,6 @@ void SimulationDeployer::RunProgram() {
     MemoryOptions Options = MC.GetConfigOptions();
 
     outputDisplayer.FeedConfigOutput(Options);
-
-
-
-
-    outputDisplayer.DisplayAll();
 }
 
 
