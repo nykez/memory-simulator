@@ -20,14 +20,16 @@ public:
 	InputReader();
 
 	std::vector<std::string> split(std::string& line, const char* delimiter);
-	std::pair<bool, std::map<std::string, std::string>> ReadConfigFile(const std::string& filename);
-	std::pair<bool, std::vector<std::pair<std::string, std::string>>> ReadTraceFile(const std::string& filename);
+	std::map<std::string, std::string> ReadConfigFile(const std::string& filename);
+	bool SetTraceFile(const std::string& filename);
+	std::pair<bool, std::pair<std::string, std::string>> ReadTrace();
 
 	bool is_integer(const std::string& s) const;
 	bool is_hex(const std::string& s) const;
 	static bool is_yn(const std::string& s);
 	void ltrim(std::string& s) const;
 	void rtrim(std::string& s) const;
+	FILE* trace_file;
 };
 
 /// <summary>
@@ -70,9 +72,8 @@ std::vector<std::string> InputReader::split(std::string& line, const char* delim
 /// </summary>
 /// <param name="filename">The path to the trace.config file.</param>
 /// <returns>A pair indicating if the operation was successful and a config file options map.</returns>
-std::pair<bool, std::map<std::string, std::string>> InputReader::ReadConfigFile(const std::string& filename)
+std::map<std::string, std::string> InputReader::ReadConfigFile(const std::string& filename)
 {
-	auto eof_reached = false; //used to signal if a file was read successfully
 	std::map<std::string, std::string> configOptions; //map to hold the config options
 	
 	//Options used to read config file
@@ -126,8 +127,28 @@ std::pair<bool, std::map<std::string, std::string>> InputReader::ReadConfigFile(
 		}
 	}
 	
-	eof_reached = true;
-	return std::make_pair(eof_reached, configOptions);
+	return configOptions;
+}
+
+bool InputReader::SetTraceFile(const std::string& filename)
+{
+	trace_file = fopen(filename.c_str(), "r");
+	if (trace_file == nullptr)
+	{
+		perror("Error opening trace file");
+		exit(EXIT_FAILURE);
+	}
+
+	return true;
+}
+
+std::pair<bool, std::pair<std::string, std::string>> InputReader::ReadTrace()
+{
+	bool reached_eof = false;
+	string trace_access;
+	string trace_hex_address;
+
+	return std::make_pair(reached_eof, std::make_pair(trace_access, trace_hex_address));
 }
 
 /// <summary>
