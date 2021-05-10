@@ -1,14 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Project:		GroupProject
-//	File Name:		PageTable.h
-//	Description:    Class for simulating a page table
-//	Course:			CSCI-4727-940: Operating Systems
-//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
-//	Created:		Wednesday, December 2 2020
-//	Copyright:	    Harrison Pollitte 2020
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef PAGETABLE_H
 #define PAGETABLE_H
 #include "../TableEntry.h"

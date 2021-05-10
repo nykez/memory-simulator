@@ -1,14 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Project:		GroupProject
-//	File Name:		MemoryController.cpp
-//	Description:    Class that coordinates and controls flow of events in memory management.
-//	Course:			CSCI-4727-940: Operating Systems
-//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
-//	Created:		Saturday, December 5 2020
-//	Copyright:	    Harrison Pollitte 2020
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 #ifndef MEM_CON_H
 #define MEM_CON_H

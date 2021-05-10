@@ -1,14 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Project:		GroupProject
-//	File Name:		SimulationDeployer.h
-//	Description:    Runs the simulation.
-//	Course:			CSCI-4727-940: Operating Systems
-//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
-//	Created:		Monday, December 7 2020
-//	Copyright:	    Harrison Pollitte 2020
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 #ifndef SIM_DEP_H

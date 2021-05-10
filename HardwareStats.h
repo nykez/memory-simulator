@@ -1,14 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Project:		GroupProject
-//	File Name:		HardwareStats.h
-//	Description:    Hold statistical information on memory components.
-//	Course:			CSCI-4727-940: Operating Systems
-//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
-//	Created:		Sunday, December 6 2020
-//	Copyright:	    Harrison Pollitte 2020
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef HARDWARE_STATS_H
 #define HARDWARE_STATS_H
 

@@ -1,14 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Project:		GroupProject
-//	File Name:		PageTable.cpp
-//	Description:    Implementation of BitUtilities.h
-//	Course:			CSCI-4727-940: Operating Systems
-//	Author:			Jordan Cavins, Department of Computing, East Tennessee State University
-//	Created:		Wednesday, December 9 2020
-//	Copyright:	    Jordan Cavins 2020
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "BitUtilities.h"
 
     /// <summary>

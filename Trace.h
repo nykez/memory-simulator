@@ -1,14 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Project:		GroupProject
-//	File Name:		Trace.h
-//	Description:    A trace! Access type and address.
-//	Course:			CSCI-4727-940: Operating Systems
-//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
-//	Created:		Sunday, December 6 2020
-//	Copyright:	    Harrison Pollitte 2020
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef TRACE_H
 #define TRACE_H
 #include <string>

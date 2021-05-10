@@ -1,14 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Project:		GroupProject
-//	File Name:		TableEntry.h
-//	Description:    Entry for Data TLB and Page Table
-//	Course:			CSCI-4727-940: Operating Systems
-//	Author:			Harrison Pollitte, pollitteh@etsu.edu, Department of Computing, East Tennessee State University
-//	Created:		Tuesday, December 8 2020
-//	Copyright:	    Harrison Pollitte 2020
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 #ifndef TABLE_ENTRY_H
 #define TABLE_ENTRY_H

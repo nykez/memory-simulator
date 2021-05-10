@@ -1,11 +1,4 @@
-/*
- * David Nelson
- * OS Final Project
- * 12-09-2020
- * Operating Systems
- * InputReader.h
- * 
- */
+
 
 #ifndef INPUTREADER_H
 #define INPUTREADER_H
